@@ -1,0 +1,15 @@
+.board-edit thead th {width: 0px;}
+
+
+.header .gnb.horizon ul li ul{
+    margin-left: 165px;
+}
+
+
+.top-contents .medifit_slide .medifit_slide_img li a span {
+	background: url(images/artn-bg_opacity_fff_80.png);
+}
+
+.top-contents .medifit_slide .medifit_slide_nav li a{
+	letter-spacing: 0px;
+}

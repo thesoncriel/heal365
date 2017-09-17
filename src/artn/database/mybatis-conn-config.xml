@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+<properties resource="struts.properties" />
+  <environments default="heal365">
+    <environment id="heal365">
+      <transactionManager type="JDBC"/>
+      <dataSource type="POOLED">
+        <property name="driver" value="${artn.database.driver}"/>
+        <property name="url" value="${artn.database.url}"/>
+        <property name="username" value="${artn.database.username}"/>
+        <property name="password" value="${artn.database.password}"/>
+        <property name="poolPingQuery" value="select 1"/>
+		<property name="poolPingEnabled" value="true"/>
+		<!-- 로컬 -->
+		<property name="poolPingConnectionsNotUsedFor" value="180000"/>
+		<!-- 서버 -->
+		<!-- <property name="poolPingConnectionsNotUsedFor" value="7200000"/> -->
+      </dataSource>
+    </environment>
+  </environments>
+  <mappers>
+    <mapper resource="artn/database/common-create.xml"/>
+    <mapper resource="artn/database/query.xml"/>
+    <mapper resource="artn/database/stats.xml"/>
+	<mapper resource="artn/database/heal-query-mediwork.xml"/>
+	<mapper resource="artn/database/heal-query-physics.xml"/>
+    <mapper resource="artn/database/common-user.xml"/>
+    <mapper resource="artn/database/common-group.xml"/>
+    <mapper resource="artn/database/common-board.xml"/>
+    <mapper resource="artn/database/common-product.xml"/>
+    <mapper resource="artn/database/common-purchase.xml"/>
+    <mapper resource="artn/database/common-survey.xml"/>
+    <mapper resource="artn/database/common.xml"/>
+    <mapper resource="artn/database/create-table.xml"/>
+    <mapper resource="artn/database/create-view.xml"/>
+  </mappers>
+</configuration>

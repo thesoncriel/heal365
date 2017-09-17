@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="artn.common">
+
+<select id="product-board-all" parameterType="map" resultType="map">
+    <![CDATA[
+    SELECT
+        apb.*,ap.name,ap.name_sub,
+        date_format(apb.date_upload,'%Y-%m-%d') date_upload_fmt,
+        (
+            select count(*)
+            from
+                artn_product ap, artn_product_board apb
+            where
+               (1=1) and
+               (ap.id = apb.id_product) and
+               ]]>
+               <if test="Guest">
+               (user_name = #{user_name}) and
+               ( (guest_phone = #{guest_phone}) or
+                 (guest_mail = #{guest_mail}) ) and
+               </if>
+               <![CDATA[
+               (((#{id_user} is null) and true) or (id_user = #{id_user})) and
+               (((#{board_no} is null) and true) or (board_no = #{board_no})) and
+               (((#{id_product} is null) and true) or (id_product = #{id_product})) and
+               (apb.id > 0)
+        ) as row_count
+    FROM
+       artn_product ap, artn_product_board apb
+    where
+       (1=1) and
+       (ap.id = apb.id_product) and
+       ]]>
+       <if test="Guest">
+       (user_name = #{user_name}) and
+       ( (guest_phone = #{guest_phone}) or
+         (guest_mail = #{guest_mail}) ) and
+       </if>
+       <![CDATA[
+       (((#{id_user} is null) and true) or (id_user = #{id_user})) and
+       (((#{board_no} is null) and true) or (board_no = #{board_no})) and
+       (((#{id_product} is null) and true) or (id_product = #{id_product})) and
+       (apb.id > 0)
+    order by
+        apb.id desc
+    limit 
+        #{offset}, #{rowlimit};
+  ]]>
+</select>
+
+<select id="product-board-single" parameterType="map" resultType="map">
+    <![CDATA[
+        select
+            apb.*,ap.name,ap.name_sub,
+            date_format(apb.date_upload,'%Y-%m-%d') date_upload_fmt
+        from 
+            artn_product ap, artn_product_board apb
+        where
+           (1=1) and
+           (ap.id = apb.id_product) and
+           ]]>
+           <if test="Guest">
+           (user_name = #{user_name}) and
+           ( (guest_phone = #{guest_phone}) or
+             (guest_mail = #{guest_mail}) ) and
+           </if>
+           <![CDATA[
+           (apb.id = #{id});    
+    ]]>
+</select>
+
+<update id="product-board-modify" parameterType="map">
+  <![CDATA[
+      replace into
+        artn_product_board
+        values(
+             #{id}
+            ,#{id_user}
+            ,#{id_seller}
+            ,#{id_group}     
+            ,#{id_product}
+            
+            ,#{user_name}
+            ,#{seller_name}
+            ,#{guest_phone}
+            ,#{guest_mail}
+            ,#{subject}
+            
+            ,#{board_no}
+            ,#{date_upload}
+            ,now()
+            ,now()
+            ,#{view_count}          
+            
+            ,#{good_count}
+            ,#{bad_count}           
+            ,#{status}
+            ,#{category}
+            ,#{contents}
+            
+            ,#{contents_reply}
+            ,#{rating}          
+        );
+  ]]>
+  </update>
+  
+    <update id="product-board-delete" parameterType="map">
+    <![CDATA[
+        UPDATE
+            artn_product_board
+        SET
+            id = id * -1
+        WHERE
+            id = #{id}
+    ]]>
+  </update>
+  
+  <update id="product-board-counting" parameterType="map">
+  <![CDATA[
+  update 
+    artn_product_board
+  set
+    view_count = view_count + 1
+  where
+    id = #{id}
+;
+  ]]>
+  </update>   
+ </mapper>

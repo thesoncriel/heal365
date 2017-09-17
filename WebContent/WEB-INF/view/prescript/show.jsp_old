@@ -1,0 +1,123 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
+<%@ taglib prefix="s" uri="/struts-tags" %>
+<s:include value="/include/header.jsp"></s:include>
+<s:set var="isAdmin" value='%{#session.user.auth_type in {"A", "a", "t", "d"}}'/>
+<div class="layout-contents">
+            <nav class="side">
+            <h3>healing up 365</h3>
+                <ul>
+                    <li><a href="/player/menu.jsp">메인메뉴</a></li>
+                    <li><a href="/prescript/list.action">나의 처방 운동 목록</a></li>
+                    <li class="prescript-show"><a href="#">내 처방전</a></li>
+                </ul>
+            </nav>
+<section>
+<article class="prescript-edit">
+	<h2>처방전 보기</h2>
+<%--
+<ul>
+    			<li><label>등록번호(ID)</label><span>${showData.id_medi_fmt}.${showData.id_fmt }</span></li>
+    			<li><label>성명</label><span>${showData.user_name }</span></li>
+    			<li><label>성별</label><span>${showData.user_gender }</span></li>
+    			<li><label>나이</label><span>${showData.age }</span></li>
+    			<li><label>생년월일</label><span>${showData.user_date_birth }</span></li>
+    			<li><label>핸드폰</label><span>${showData.user_phone_mobi1 }</span>-<span>${showData.user_phone_mobi2 }</span>-<span>${showData.user_phone_mobi3 }</span></li>
+    			<li><label>집전화</label><span>${showData.user_phone_home1 }</span>-<span>${showData.user_phone_home2 }</span>-<span>${showData.user_phone_home3 }</span></li>
+    			<li><label>주소(집)</label><span>${showData.user_zipcode_home1 }</span>-<span>${showData.user_zipcode_home2 }</span> <span>${showData.user_zipcode_home3 }</span>
+    										<span>${showData.user_address_home1 }</span><span>${showData.user_address_home2 }</span><span>${showData.user_address_home3 }</span></li>
+    			<li><label>주소(회사)</label><span>${showData.user_zipcode_corp1 }</span>-<span>${showData.user_zipcode_corp2 }</span> <span>${showData.user_zipcode_corp3 }</span>
+    										<span>${showData.user_address_corp1 }</span><span>${showData.user_address_corp2 }</span><span>${showData.user_address_corp3 }</span></li>
+    		</ul>
+ --%>
+		<table>
+		<tbody>
+		<tr><th><label>환자명</label></th> 
+			<td><span>${showData.name_user }</span></td>
+			<th><label>전화번호</label></th> 
+			<td><span>${showData.phone_user }</span></td></tr>
+		
+		<tr><th><label>의사명</label></th> 
+			<td><span>${showData.name_doctor }</span></td>
+			<th><label>의료기관명</label></th>
+			<td><span>${showData.name_doctor_medi }</span></td></tr>
+			
+		<tr><th><label>진단일</label></th> 
+			<td><span>${showData.date_upload }</span></td>
+			<th><label>만료일</label></th> 
+			<td><span>${showData.date_end }</span></td></tr>
+	
+		<tr><th><label>진단명</label></th>
+			<td><span>${showData.diagnosis }</span></td>
+			<td colspan="2" rowspan="4" style="border: 1px #ccc solid; border-width: 1px 0px 1px 1px;"><img src="/img/prescript-body.png" width="380" height="230"/></td></tr>
+			
+		<tr><th><label>진단소견</label></th>
+			<td><pre>${showData.remark }</pre></td></tr>
+			
+		<tr><th><label>운동치료사</label></th>
+			<td><span>${showData.name_therap }</span></td>
+			<%--<th><label>운동치료기관</label></th> 
+			<td><input type="text" name="name_therap_medi" value="${showData.name_therap_medi }"/></td> --%></tr>
+			
+		<tr><th><label>대분류</label></th>
+			<td><span><s:include value="/include/combobox-data/cate_movie.jsp">
+				<s:param name="cmb">cate_movie1</s:param>
+                <s:param name="val">${showData.cate_movie1 }</s:param>
+                <s:param name="sub">HL_kor</s:param>
+			</s:include></span></td></tr>
+		<tr><th><label>ROM</label></th>
+        	<td colspan="3" id="rom">
+        		<s:include value="/include/prescript/rom.jsp">
+        		<s:param name="rom">${showData.rom}</s:param>
+        		<s:param name="cate_movie1">${showData.cate_movie1}</s:param>
+        		<s:param name="show">1</s:param>
+        		</s:include>
+        	</td></tr>
+		<tr><th><label>중증도(VAS)</label></th>
+			<td colspan="3"><span>${showData.body_vas }</span></td></tr>
+		
+		<tr><th><label>조합 영상 제목</label></th>
+			<td colspan="3"><span>${showData.subject_comb }</span></td></tr>
+		
+		<tr><th><label>조합 영상</label>
+			</th>
+			<td colspan="3">
+			<a href="/player/player.jsp?id=${showData.id_comb }">미리보기</a>
+			</td></tr>
+		
+		<tr><th><label>사후조치</label></th>
+		<td colspan="3"><span>${showData.after_action }</span></td></tr>
+		
+		<tr><th><label>수행요일</label></th>
+		<td colspan="3">
+			<span>${showData.weekly_chk }</span>
+			
+		</td></tr>
+		
+		<tr><th><label>운동횟수</label></th> 
+			<td><span>${showData.exe_count }</span></td>
+			<th><label>진단지속</label></th> 
+			<td><span>${showData.continued_kor }</span></td></tr>
+				
+		<tr><th><label>코멘트</label></th>
+			<td colspan="3"><pre>${showData.comment }</pre></td></tr>
+			
+		</tbody>
+		</table>
+		
+		<input type="hidden" name="cate_comb0" value="HL"/>
+		<s:if test='%{showData.id != null}'><input type="hidden" name="id" value="${showData.id}"/></s:if>
+
+		<div class="list-values" style="display: none">
+			<input type="hidden" name="id_movie" value="${showData.id_movie}"/>
+			<input type="hidden" name="file_img" value="${showData.file_img}"/>
+			<input type="hidden" name="subject_movie" value="${showData.subject_movie}"/>
+			<input type="hidden" name="repeat_cnt" value="${showData.repeat_cnt}"/>
+		</div>
+		
+	<a href="list.action">목록</a> <s:if test='%{#isAdmin == true}'><a href="edit.action?id=${showData.id }">수정</a></s:if>
+
+</article>
+</section>
+</div>
+<s:include value="/include/footer.htmlpart"></s:include>

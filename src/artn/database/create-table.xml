@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="artn.heal.database">
+	<update id="heal-user">
+		<![CDATA[
+			create table if not exists heal_user (
+			id varchar(16) not null,
+			name varchar(50) not null,
+			pw varchar(16) not null,
+			email varchar(50) not null,
+			phone_home char(20) default '',
+			phone_corp char(20) default '',
+			phone_mobi char(20) not null,
+			jumin char(14) default '',
+			date_birth datetime not null,
+			date_join datetime not null,
+			id_medi int(11) default 0,
+			group_name varchar(50) default 'none',
+			group_dept varchar(50) default 'none',
+			group_id int(11) default 0,
+			gender char(1) default 'm',
+			id_comb_used varchar(45) default 'none',
+			id_comb_nth int(11) default 'none',
+			zip_code_home char(7) default 0,
+			address_home1 varchar(100) default '',
+			address_home2 varchar(100) default '',
+			zip_code_corp char(7) default 0,
+			address_corp1 varchar(100) default '',
+			address_corp2 varchar(100) default '',
+			auth_type char(3) default '0',
+			file_img varchar(100) default '',
+			comment varchar(200) default '',
+			primary key(id, email, phone_mobi)
+			);
+		]]>
+	</update>
+	
+	
+	
+	<update id="heal-user-workout">
+		<![CDATA[
+			create table if not exists heal_user_workout(
+			id_comb int not null,
+			id_user varchar(16) not null,
+			date_upload datetime default CURRENT_TIMESTAMP,
+			primary key (id_comb, id_user)
+			);
+		]]>
+	</update>
+	
+	
+	<update id="heal-prescript-header">
+		<![CDATA[
+			CREATE  TABLE if not exists heal_prescript_header (
+			  id INT NOT NULL AUTO_INCREMENT ,
+			  id_medi INT NOT NULL DEFAULT 0,
+			  id_user VARCHAR(16) NOT NULL DEFAULT '' ,
+			  id_doctor VARCHAR(16) NOT NULL DEFAULT '' ,
+			  id_therap VARCHAR(16) NOT NULL DEFAULT '' ,
+			  date_upload DATETIME NOT NULL ,
+			  date_end VARCHAR(45) NOT NULL ,
+			  diagnosis VARCHAR(100) NOT NULL DEFAULT '' ,
+			  height FLOAT NOT NULL DEFAULT 0 ,
+			  weight FLOAT NOT NULL DEFAULT 0 ,
+			  bmi SMALLINT NOT NULL DEFAULT 0 ,
+			  bp_high SMALLINT NOT NULL DEFAULT 0 ,
+			  bp_low SMALLINT NOT NULL DEFAULT 0 ,
+			  family_history VARCHAR(200) NOT NULL DEFAULT '' ,
+			  curr_sick INT NOT NULL DEFAULT 0 ,
+			  remark TEXT NOT NULL ,
+			  after_action VARCHAR(255) NOT NULL DEFAULT '' ,
+			  comment TEXT NOT NULL ,
+			  continued TINYINT NOT NULL DEFAULT 0 ,
+			  status TINYINT NOT NULL DEFAULT 0,
+			PRIMARY KEY (id) );
+		]]>
+	</update>  
+		
+	<update id="heal-prescript-comb">
+		<![CDATA[
+			CREATE  TABLE if not exists heal_prescript_comb (
+			  seq INT NOT NULL ,
+			  id_pres INT NOT NULL ,
+			  id_comb BIGINT NOT NULL DEFAULT 0 ,
+			  odi INT NOT NULL DEFAULT 0 ,
+			  str INT NOT NULL DEFAULT 0 ,
+			  rom VARCHAR(120) NOT NULL DEFAULT '000' ,
+			  weekly_chk BIGINT NOT NULL DEFAULT 0 ,
+			  frequency INT NOT NULL DEFAULT 0 ,
+			  intensity INT NOT NULL DEFAULT 0 ,
+			  duration INT NOT NULL DEFAULT 0 ,
+			  form INT NOT NULL DEFAULT 0 ,
+			PRIMARY KEY (seq, id_pres) );
+		]]>
+	</update>
+		
+	<update id="heal-movie-file">
+		<![CDATA[
+			create table if not exists heal_movie_file (
+			  id integer primary key AUTO_INCREMENT,
+			  subject varchar(100) default '',
+			  file_id varchar(50) default '',
+			  file_webm varchar(50) default '',
+			  file_mp4 varchar(50) default '',
+			  file_ogg varchar(50) default '',
+			  file_mp3 varchar(50) default '',
+			  file_img varchar(50) default '',
+			  file_smi varchar(50) default '',
+			  ori_webm varchar(50) default '',
+			  ori_mp4 varchar(50) default '',
+			  ori_ogg varchar(50) default '',
+			  ori_mp3 varchar(50) default '',
+			  ori_img varchar(50) default '',
+			  ori_smi varchar(50) default '',
+			  cate_movie char(20) default '',
+			  cate_sub int default 0,
+			  date_upload datetime not null,
+			  use_cnt int default 0,
+			  vas_low float default 1,
+			  vas_high float default 1
+			);
+		]]>
+	</update>
+		
+	<update id="heal-comb-header">
+		<![CDATA[
+			create table if not exists heal_comb_header (
+			id bigint primary key AUTO_INCREMENT,
+			subject varchar(100) default '',
+			id_user varchar(16) default '',
+			date_upload datetime not null,
+			cate_movie char(20) default '',
+			cate_sub int default 0,
+			cate_menu int default 0,
+			use_cnt int default 0,
+			vas_low float default 1,
+			vas_high float default 1,
+			weekly_pfm int not null default 0
+			);
+		]]>
+	</update>
+		
+	<update id="heal-comb-cont">
+		<![CDATA[
+			create table if not exists heal_comb_cont (
+			id_comb bigint not null,
+			seq int not null,
+			id_movie int default 0,
+			repeat_cnt int default 1,
+			repeat_start int default 0,
+			repeat_end int default 0,
+			nth int default 1,
+			left_right char(1) default '',
+			popup char(1) default '',
+			popup_msg varchar(255) default '',
+			popup_action varchar(255) default '',
+			primary key(id_comb, seq)
+			);
+		]]>
+	</update>
+		
+	<update id="heal-board">
+		<![CDATA[
+			CREATE TABLE if not exists heal_board (
+			id INT NOT NULL AUTO_INCREMENT,
+			board_type CHAR(1) NOT NULL,
+			category VARCHAR(20) DEFAULT '',
+			subject VARCHAR(255) NOT NULL,
+			uploader VARCHAR(100) NOT NULL,
+			content MEDIUMTEXT NOT NULL,
+			date_upload DATETIME NOT NULL,
+			file_image VARCHAR(100) DEFAULT ''
+			file_upload VARCHAR(100) DEFAULT ''
+			PRIMARY KEY (id)
+			);
+		]]>
+	</update>
+		
+	<update id="heal-log">
+		<![CDATA[
+			CREATE TABLE if not exists heal_log (
+			id_user VARCHAR(16) NOT NULL DEFAULT '',
+			email_user VARCHAR(50) NOT NULL DEFAULT '',
+			phone_user VARCHAR(20) NOT NULL DEFAULT '',
+			upload_date DATETIME NOT NULL,
+			div CHAR(1) NOT NULL DEFAULT '',
+			id_cont BIGINT NOT NULL DEFAULT -1,
+			PRIMARY KEY (id_user, upload_date));
+		]]>
+	</update>
+	
+	<update id="heal-group">
+		<![CDATA[
+			CREATE TABLE if not exists heal_group(
+			id INT(11) NOT NULL AUTO_INCREMENT,
+			name VARCHAR(50) NOT NULL DEFAULT '',
+			address VARCHAR(255) NOT NULL DEFAULT '',
+			phone CHAR(20) NOT NULL DEFAULT '',
+			fax CHAR(20) NOT NULL DEFAULT '',
+			id_user VARCHAR(50) NOT NULL DEFAULT '',
+			name_user VARCHAR(50) NOT NULL DEFAULT '',
+			zipcode CAHR(7) NOT NULL DEFAULT '',
+			intro VARCHAR(45) NOT NULL DEFAULT '',
+			div_group CHAR(1) NOT NULL DEFAULT '',
+			work_type VARCHAR(20) NOT NULL DEFAULT '',
+			url VARCHAR(255) NOT NULL DEFAULT '',
+			date_estab DATE NOT NULL,
+			file_img VARCHAR(100) NOT NULL DEFAULT '',
+			url_map VARCHAR(255) NOT NULL DEFAULT '',
+			coordinate VARCHAR(30) NOT NULL DEFAULT '',
+			file_banner VARCHAR(100) NOT NULL DEFAULT '',
+			PRIMARY KEY (id)
+			);
+		]]>
+	</update>
+	
+	<update id="heal-service">
+		<![CDATA[
+			CREATE TABLE if not exists heal_service (
+			id INT(11) NOT NULL AUTO_INCREMENT,
+			group_name VARCHAR(50) NOT NULL,
+			name VARCHAR(50) NOT NULL,
+			phone CHAR(20) NOT NULL,
+			email VARCHAR(50) NOT NULL,
+			url VARCHAR(255) NOT NULL DEFAULT '',
+			service_type CHAR(1) NOT NULL,
+			subject VARCHAR(255) NOT NULL,
+			content MEDIUMTEXT NOT NULL,
+			date_upload DATETIME NOT NULL
+			PRIMARY KEY (id)
+			);
+		]]>
+	</update> 
+	
+	
+<update id="item_detail">
+	CREATE TABLE `item_detail` (
+	  `id_detail` int(11) NOT NULL,
+	  `id_select` int(11) NOT NULL,
+	  `id_type` int(11) NOT NULL,
+	  `item_value` varchar(45) NOT NULL,
+	  `date_upload` datetime NOT NULL,
+	  `date_update` datetime NOT NULL,
+	  `first_writer` varchar(45) NOT NULL,
+	  `last_writer` varchar(45) NOT NULL,
+	  `id_writer` varchar(16) NOT NULL,
+	  `user_name` varchar(45) NOT NULL,
+	  `id_user` varchar(16) NOT NULL,
+	  PRIMARY KEY (`id_detail`)
+	) ENGINE=InnoDB DEFAULT CHARSET=utf8$$
+</update> 
+	
+	
+<update id="item_select">
+	CREATE TABLE `item_select` (
+	  `id_select` int(11) NOT NULL AUTO_INCREMENT,
+	  `id_group` int(11) NOT NULL,
+	  `group_name` varchar(45) NOT NULL,
+	  `id_type` int(11) NOT NULL,
+	  PRIMARY KEY (`id_select`)
+	) DEFAULT CHARSET=utf8$$	
+</update> 
+	
+	
+<update id="item_type">
+	CREATE TABLE `item_type` (
+	  `id_type` int(11) NOT NULL AUTO_INCREMENT,
+	  `item_name` varchar(50) NOT NULL,
+	  `item_type` tinyint(4) NOT NULL,
+	  `item_option_select` varchar(45) NOT NULL,
+	  `item_unit` varchar(45) NOT NULL,
+	  `item_use_yn` tinyint(4) NOT NULL,
+	  PRIMARY KEY (`id_type`)
+	) DEFAULT CHARSET=utf8$$
+</update> 
+	
+
+
+<update id="heal_approval_process">
+CREATE TABLE `heal_approval_process` (
+  `id_approval_process` int(11) NOT NULL AUTO_INCREMENT,
+  `id_task` int(11) DEFAULT NULL,
+  `id_previewer` varchar(16) DEFAULT NULL,
+  `id_approver` varchar(16) DEFAULT NULL,
+  `previewer_name` varchar(50) DEFAULT NULL,
+  `approver_name` varchar(50) DEFAULT NULL,
+  `date_preview` datetime DEFAULT NULL,
+  `date_approve` datetime DEFAULT NULL,
+  `task_type` char(10) DEFAULT NULL,
+  `comment_previewer` varchar(255) DEFAULT NULL,
+  `comment_approver` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id_approval_process`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8$$
+</update>
+
+	
+	 
+</mapper>

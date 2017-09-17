@@ -1,0 +1,811 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="artn.heal.database">
+
+<!-- 건강검진 (Medi Check) - 2013.12.21 by jhson [시작] -->
+<select id="physics-field-all" parameterType="map" resultType="map">
+<![CDATA[
+select 
+	*
+from
+	heal_medi_physics_field
+where
+	/*일련번호(ID)*/
+	( ( ((#{id} is null) or (#{id} = '')) and (id > 0)) or ( id = #{id} ) )
+;
+]]>
+</select>
+
+<select id="physics-field-single" parameterType="map" resultType="map">
+<![CDATA[
+select 
+	*
+from
+	heal_medi_physics_field
+where
+	/*일련번호(ID)*/
+	id = #{id}
+;
+]]>
+</select>
+
+<update id="physics-field-modify" parameterType="map">
+<![CDATA[
+replace into 
+	heal_medi_physics_field (
+	id,
+	field_name,
+	field_type,
+	field_label,
+	field_unit,
+		
+	field_relation,
+	date_upload,
+	date_update,
+	
+	result_code
+	)
+values(
+	#{id},
+	#{field_name},
+	#{field_type},
+	#{field_label},
+	#{field_unit},
+	
+	#{field_relation},
+	#{date_upload},
+	now(),
+	
+	#{result_code}
+	);
+;
+]]>
+</update>
+
+<select id="physics-field-getResult" parameterType="map" resultType="java.lang.String">
+<![CDATA[
+select 
+	case
+	when #{field_value} = 0 then result0
+	when (result1min <= #{field_value}) and (#{field_value} <= result1max) then result1
+	when (result2min <= #{field_value}) and (#{field_value} <= result2max) then result2
+	when (result3min <= #{field_value}) and (#{field_value} <= result3max) then result3
+	when (result4min <= #{field_value}) and (#{field_value} <= result4max) then result4
+	when (result5min <= #{field_value}) and (#{field_value} <= result5max) then result5
+	else '측정보류'
+	end as result
+from
+	heal_medi_physics_field
+where
+	id = #{id_medi_check_field};
+]]>
+</select>
+
+
+
+<select id="physics-conf-all" parameterType="map" resultType="map">
+<![CDATA[
+select g.*,
+(select count(*) from heal_medi_physics_conf c where c.id_medi = g.id) as field_count,
+(select count(*) from artn_group) as row_count
+from
+	artn_group g
+order by
+	id desc
+limit 
+	#{offset}, #{rowlimit};
+;
+]]>
+</select>
+<select id="physics-conf-show" parameterType="map" resultType="map">
+<![CDATA[
+select 
+	mcc.*,
+	mcf.field_name,
+	mcf.field_type,
+	mcf.field_label,
+	mcf.field_unit,
+	mcf.result_code,
+	mcf.field_label
+from	
+	heal_medi_physics_conf mcc
+	left outer join heal_medi_physics_field mcf
+	on mcc.id_medi_check_field = mcf.id
+where
+	/*일련번호(ID)*/
+	( ( ((#{id} is null) or (#{id} = '')) and (mcc.id > 0)) or ( mcc.id = #{id} ) ) and
+	( ( ((#{id_medi} is null) or (#{id_medi} = '')) and (mcc.id_medi > 0)) or ( mcc.id_medi = #{id_medi} ) ) and
+	( ( ((#{id_medi_check_field} is null) or (#{id_medi_check_field} = '')) and (mcc.id_medi_check_field > 0)) or ( mcc.id_medi_check_field = #{id_medi_check_field} ) )
+	order by mcc.position_group, mcc.position_seq
+;
+]]>
+</select>
+
+<select id="physics-conf-single" parameterType="map" resultType="map">
+<![CDATA[
+select 
+	*
+from
+	heal_medi_physics_conf
+where
+	/*일련번호(ID)*/
+	id = #{id}
+;
+]]>
+</select>
+
+<update id="physics-conf-modify" parameterType="map">
+<![CDATA[
+replace into 
+	heal_medi_physics_conf (
+	id,
+	id_medi,
+	id_medi_check_field,
+	medi_name,
+	position_group,
+	
+	position_seq,
+	date_upload,
+	date_update
+	)
+values(
+	#{id},
+	#{id_medi},
+	#{id_medi_check_field},
+	#{medi_name},
+	#{position_group},
+	
+	#{position_seq},
+	#{date_upload},
+	now()
+	);
+;
+]]>
+</update>
+
+<update id="physics-conf-delete" parameterType="map">
+<![CDATA[
+	delete
+		from
+			heal_medi_physics_conf
+		where
+			id_medi = #{id_medi}
+		;
+]]>
+</update>
+
+
+
+<select id="physics-complete-conf-all" parameterType="map" resultType="map">
+<![CDATA[
+select *
+from
+	heal_medi_physics_complete_conf
+where
+	id_medi = #{id_medi}
+order by
+	seq asc
+;
+]]>
+</select>
+
+<update id="physics-complete-conf-modify" parameterType="map">
+<![CDATA[
+replace into 
+	heal_medi_physics_complete_conf (
+	id_medi,
+	seq,
+	field_id,
+	field_name,
+	field_unit,
+	
+	field_column,
+	use_type,
+	date_upload
+	)
+values(
+	#{id_medi},
+	#{seq},
+	#{field_id},
+	#{field_name},
+	#{field_unit},
+	
+	#{field_column},
+	#{use_type},
+	now()
+	);
+;
+]]>
+</update>
+
+<update id="physics-complete-conf-delete" parameterType="map">
+<![CDATA[
+delete
+from
+	heal_medi_physics_complete_conf
+where
+	id_medi = #{id_medi}
+;
+]]>
+</update>
+
+
+
+
+<select id="physics-data-all" parameterType="map" resultType="map">
+<![CDATA[
+select 
+	*,
+	date_format(date_update, '%Y-%m-%d') as date_update_fmt
+from
+	heal_medi_physics_data
+where
+	/*병원정보(ID)*/
+	( ( ((#{id_medi} is null) or (#{id_medi} = '')) and true) or ( id_medi = #{id_medi} ) ) and
+	/*사용자정보(ID)*/
+	( ( ((#{id_user} is null) or (#{id_user} = '')) and true) or ( id_user = #{id_user} ) ) and
+	/*사용자명*/
+	( ( ((#{user_name} is null) or (#{user_name} = '')) and true) or ( user_name = #{user_name} ) )
+;
+]]>
+</select>
+
+<select id="physics-data-single" parameterType="map" resultType="map">
+<![CDATA[
+select 
+	*
+from
+	heal_medi_physics_data
+where
+	/*일련번호(ID)*/
+	id = #{id}
+;
+]]>
+</select>
+
+
+<update id="physics-data-modify" parameterType="map">
+<![CDATA[
+replace into 
+	heal_medi_physics_data (
+	id,
+	id_complete,
+	id_pres,
+	id_medi,
+	id_medi_check_field,
+	
+	id_user,
+	id_writer,
+	id_writer_last,
+	pain_site_check,
+	medi_name,
+	
+	user_name,
+	writer_name,
+	writer_last_name,
+	field_name,
+	field_value,
+	
+	field_result,
+	field_type,
+	field_unit,
+	position_group,
+	position_seq,
+	
+	date_upload,
+	date_update,
+	date_complete
+	)
+values(
+	#{id},
+	#{id_complete},
+	#{id_pres},
+	#{id_medi},
+	#{id_medi_check_field},
+	
+	#{id_user},
+	#{id_writer},
+	#{id_writer_last},
+	#{pain_site_check},
+	#{medi_name},
+	
+	#{user_name},
+	#{writer_name},
+	#{writer_last_name},
+	#{field_name},
+	#{field_value},
+	
+	#{field_result},
+	#{field_type},
+	#{field_unit},
+	#{position_group},
+	#{position_seq},
+	
+	#{date_upload},
+	now(),
+	#{date_complete}
+	);
+]]>
+</update>
+
+
+
+
+<select id="physics-data-getMaxIdComplete" resultType="java.lang.Integer">
+<![CDATA[
+select 
+	max(id_complete) id_complete
+from
+	heal_medi_physics_data
+;
+]]>
+</select>
+
+<select id="physics-data-getMaxIdList" parameterType="map" resultType="java.lang.Integer">
+<![CDATA[
+select max(id) id
+	from
+		heal_medi_physics_data
+	where
+		(id_medi = #{id_medi} and ( (id_complete is null) or (id_complete = '') ) ) and
+		(id_user = #{id_user} )
+	group by
+		id_medi_check_field
+	;
+]]>
+</select>
+
+<select id="physics-data-complete-target" parameterType="map" resultType="map">
+<![CDATA[
+SELECT 
+	mcd.*,
+	mcc.seq,
+	mcc.field_id,
+	mcc.field_column
+FROM 
+	heal_medi_physics_data mcd
+	left outer join heal_medi_physics_complete_conf mcc
+	on mcd.id_medi_check_field = mcc.field_id and
+		mcd.id_medi = mcc.id_medi
+where 
+mcd.id in (
+select max(id) id
+	from
+		heal_medi_physics_data
+	where
+		(id_medi = #{id_medi} and ( (id_complete is null) or (id_complete = '') ) ) and
+		(id_user = #{id_user} )
+	group by
+		id_medi_check_field
+)
+;
+]]>
+</select>
+
+
+<update id="physics-data-complete" parameterType="map">
+<![CDATA[
+    update 
+        heal_medi_physics_data
+    set
+        id_complete = #{id_complete} + 1,
+        date_complete = now()
+    where
+        id = #{id}
+    ;
+]]>
+</update>
+
+<select id="physics-progress-all" parameterType="map" resultType="map">
+<![CDATA[
+select 
+	*,
+	date_format(date_update, '%Y-%m-%d') as date_update_fmt,
+	
+	(select count(*) from heal_medi_physics_data where
+		/*작성 진행중*/
+		( ( (#{complete_only} is null) and true) or (id_complete is not null) ) and
+		/*작성 완료*/
+		( ( (#{progress_only} is null) and true) or (id_complete is null) ) and
+		/*병원정보(ID)*/
+		( ( ((#{id_medi} is null) or (#{id_medi} = '')) and true) or ( id_medi = #{id_medi} ) ) and
+		/*사용자정보(ID)*/
+		( ( ((#{id_user} is null) or (#{id_user} = '')) and true) or ( id_user = #{id_user} ) ) and
+		/*병원명*/
+		( ( ((#{medi_name} is null) or (#{medi_name} = '')) and true) or ( medi_name = #{medi_name} ) ) and
+		/*사용자명*/
+		( ( ((#{user_name} is null) or (#{user_name} = '')) and true) or ( user_name = #{user_name} ) )
+	) as row_count
+from
+	heal_medi_physics_data
+where
+	/*작성 진행중*/
+	( ( (#{complete_only} is null) and true) or (id_complete is not null) ) and
+	/*작성 완료*/
+	( ( (#{progress_only} is null) and true) or (id_complete is null) ) and
+	/*병원정보(ID)*/
+	( ( ((#{id_medi} is null) or (#{id_medi} = '')) and true) or ( id_medi = #{id_medi} ) ) and
+	/*사용자정보(ID)*/
+	( ( ((#{id_user} is null) or (#{id_user} = '')) and true) or ( id_user = #{id_user} ) ) and
+	/*병원명*/
+	( ( ((#{medi_name} is null) or (#{medi_name} = '')) and true) or ( medi_name = #{medi_name} ) ) and
+	/*사용자명*/
+	( ( ((#{user_name} is null) or (#{user_name} = '')) and true) or ( user_name = #{user_name} ) )
+order by
+	date_update desc
+limit 
+	#{offset}, #{rowlimit}
+;
+]]>
+</select>
+
+
+
+<select id="physics-progress-single" parameterType="map" resultType="map">
+<![CDATA[
+select 
+	mcc.id as id_medi_check_conf,
+	mcd.field_name,
+	mcd.field_type,
+	mcf.field_label,
+	mcd.field_unit,
+	
+	mcd.
+from
+	heal_medi_physics_conf mcc
+	left outer join heal_medi_physics_field mcf
+	on mcc.id_medi_check_field = mcf.id
+	left outer (select * from join heal_medi_physics_data where ( ((#{id} is null) or (#{id} = '')) and (id = 0)) or ( id = #{id} ) mcd
+	on mcc.id_medi_check_field = mcd.id_medi_check_field
+where
+	/*일련번호(ID)*/
+	( ( ((#{id} is null) or (#{id} = '')) and (mcc.id > 0)) or ( mcc.id = #{id} ) ) and
+	( ( ((#{id_medi} is null) or (#{id_medi} = '')) and (mcc.id_medi > 0)) or ( mcc.id_medi = #{id_medi} ) ) and
+	( ( ((#{id_medi_check_field} is null) or (#{id_medi_check_field} = '')) and (mcc.id_medi_check_field > 0)) or ( mcc.id_medi_check_field = #{id_medi_check_field} ) )
+	order by mcc.position_group, mcc.position_seq
+]]>
+</select>
+
+
+
+<select id="physics-progress-stats-summary" parameterType="map" resultType="map">
+<![CDATA[
+select 
+	count(*) as summary_count,
+	mcd.*
+from
+	heal_medi_physics_conf mcc
+	left join heal_medi_physics_data mcd
+	on
+	mcc.id_medi_check_field = mcd.id_medi_check_field and
+	mcc.id_medi = mcd.id_medi
+where
+	/*일련번호(ID)*/
+	( ( ((#{id_medi} is null) or (#{id_medi} = '')) and (mcc.id_medi > 0)) or ( mcc.id_medi = #{id_medi} ) ) and
+	( 
+		( ((#{date_upload_s} is null) or (#{date_upload_s} = '')) and ( (current_date() <= mcd.date_upload) and (mcd.date_upload < date_add(current_date(), interval 1 day)) ) )
+		or ( (#{date_upload_s} <= mcd.date_upload) and (mcd.date_upload < date_add(#{date_upload_e}, interval 1 day) ) )
+	)
+	
+group by
+	mcc.id_medi_check_field
+;
+
+]]>
+</select>
+
+<!-- // 오류를 찾아라 ㅠㅠ
+select 
+	count(*) as summary_count,
+	mcd.*
+from
+	heal_medi_check_conf mcc
+	left join heal_medi_check_data mcd
+	on
+	mcc.id_medi_check_field = mcd.id_medi_check_field and
+	mcc.id_medi = mcd.id_medi
+where
+	/*일련번호(ID)*/
+	( ( ((#{id_medi} is null) or (#{id_medi} = '')) and (mcc.id_medi > 0)) or ( mcc.id_medi = #{id_medi} ) ) and
+	( 
+		( ((#{date_upload_s} is null) or (#{date_upload_s} = '')) and ( (current_date() <= mcd.date_upload) and (mcd.date_upload < date_add(current_date(), interval 1 day)) ) )
+		or ( (#{date_upload_s} <= mcd.date_upload) and (mcd.date_upload < date_add(#{date_upload_e}, interval 1 day) ) )
+	)
+	
+group by
+	mcc.id_medi_check_field
+;
+ -->
+
+<select id="physics-complete-all" parameterType="map" resultType="map">
+<![CDATA[
+select 
+	hmpc.*, hap.id_approver, hap.approver_name,
+	date_format(date_complete, '%Y-%m-%d') as date_complete_fmt,
+	(select count(*) 
+		from		
+			heal_medi_physics_complete rhmpc
+			left join heal_approval_process rhap
+			on rhap.task_type = 'physics' and rhmpc.id_complete = rhap.id_task
+		where
+			/*병원정보(ID)*/
+			( ( ((#{id_medi} is null) or (#{id_medi} = '')) and true) or ( id_medi = #{id_medi} ) ) and
+			/*사용자정보(ID)*/
+			( ( ((#{id_user} is null) or (#{id_user} = '')) and true) or ( id_user = #{id_user} ) ) and
+			/*병원명*/
+			( ( ((#{medi_name} is null) or (#{medi_name} = '')) and true) or ( medi_name = #{medi_name} ) ) and
+			/*사용자명*/
+			( ( ((#{user_name} is null) or (#{user_name} = '')) and true) or ( user_name = #{user_name} ) ) and
+	        /*날짜*/
+	        ( ( ((#{date_upload} is null) or (#{date_upload} = '')) and true) or (date(date_complete) = #{date_upload}) ) and
+	        /*검색날짜*/
+            ( ( ((#{date_stats_start} is null) or (#{date_stats_start} = '')) and true) or (date(date_complete) <= date(#{date_stats_end}) and date(date_complete) >= date(#{date_stats_start})) ) and
+	        /* 검색 */
+	        ( ( ((#{search_div} is null) or (#{search_div} = '') or (#{search_text} = '')) and true ) or
+	          ( (#{search_div} = 'writer_name') and (writer_name like concat('%', #{search_text}, '%')) ) or
+	          ( (#{search_div} = 'user_name') and (user_name like concat('%', #{search_text}, '%')) ) )
+	) as row_count
+from
+	heal_medi_physics_complete hmpc
+	left join heal_approval_process hap
+	on hap.task_type = 'physics' and hmpc.id_complete = hap.id_task
+where
+	/*병원정보(ID)*/
+	( ( ((#{id_medi} is null) or (#{id_medi} = '')) and true) or ( id_medi = #{id_medi} ) ) and
+	/*사용자정보(ID)*/
+	( ( ((#{id_user} is null) or (#{id_user} = '')) and true) or ( id_user = #{id_user} ) ) and
+	/*병원명*/
+	( ( ((#{medi_name} is null) or (#{medi_name} = '')) and true) or ( medi_name = #{medi_name} ) ) and
+	/*사용자명*/
+	( ( ((#{user_name} is null) or (#{user_name} = '')) and true) or ( user_name = #{user_name} ) ) and
+    /*날짜*/
+    ( ( ((#{date_upload} is null) or (#{date_upload} = '')) and true) or (date(date_complete) = #{date_upload}) ) and
+    /*검색날짜*/
+    ( ( ((#{date_stats_start} is null) or (#{date_stats_start} = '')) and true) or (date(date_complete) <= date(#{date_stats_end}) and date(date_complete) >= date(#{date_stats_start})) ) and
+    /* 검색 */
+    ( ( ((#{search_div} is null) or (#{search_div} = '') or (#{search_text} = '')) and true ) or
+      ( (#{search_div} = 'writer_name') and (writer_name like concat('%', #{search_text}, '%')) ) or
+      ( (#{search_div} = 'user_name') and (user_name like concat('%', #{search_text}, '%')) ) )
+order by
+	date_complete desc
+limit 
+	#{offset}, #{rowlimit}
+;
+]]>
+</select>
+
+<select id="physics-complete-single" parameterType="map" resultType="map">
+<![CDATA[
+select 
+	mcc.field_name, 
+	mcc.field_unit,
+	mcc.field_type,
+	mcc.id_medi,
+	mcc.id_medi_check_field,
+	mcc.medi_name,
+	mcc.position_group,
+	mcc.position_seq,
+	mcd.id,
+	mcd.id_complete,
+	mcd.id_pres,
+	mcd.id_user,
+	mcd.id_writer,
+	mcd.id_writer_last,
+	mcd.pain_site_check,
+	mcd.user_name,
+	mcd.writer_name,
+	mcd.writer_last_name,
+	mcd.pain_site_check,
+	mcd.field_value,
+	mcd.field_result,
+	mcd.date_upload,
+	mcd.date_update,
+	mcd.date_complete,
+	date_format(mcd.date_upload, '%Y년 %m월 %d일') as date_upload_fmt
+from
+	(select 
+		hmcf.field_name, 
+		hmcf.field_unit,
+		hmcf.field_type,
+		hmcc.id_medi,
+		hmcc.id_medi_check_field,
+		hmcc.medi_name,
+		hmcc.position_group,
+		hmcc.position_seq
+	from 
+		heal_medi_physics_conf hmcc 
+		left outer join heal_medi_physics_field hmcf 
+		on hmcc.id_medi_check_field = hmcf.id 
+		where id_medi = #{id_medi}) mcc
+	left outer join (select * from heal_medi_physics_data where id_complete = #{id_complete}) mcd
+	on mcc.id_medi = mcd.id_medi and mcc.id_medi_check_field = mcd.id_medi_check_field
+order by
+    mcc.position_group,
+    mcc.position_seq
+;
+]]>
+</select>
+
+<select id="physics-complete-sing" parameterType="map" resultType="map">
+<![CDATA[
+	SELECT * FROM heal_medi_physics_complete
+	where id_user=#{id_user}
+	order by date_complete desc
+	limit 1;
+]]>
+</select>
+
+<update id="physics-complete-modify" parameterType="map">
+<![CDATA[
+replace into 
+	heal_medi_physics_complete (
+	id_complete,
+	id_medi,
+	id_user,
+	id_writer,
+	medi_name,
+	user_name,
+	writer_name,
+	
+	date_complete,
+	
+	field1_value,
+	field1_result,
+	field2_value,
+	field2_result,
+	
+	field3_value,
+	field3_result,
+	field4_value,
+	field4_result,
+	
+	field5_value,
+	field5_result,
+	field6_value,
+	field6_result,
+	
+	field7_value,
+	field7_result,
+	field8_value,
+	field8_result,
+	
+	field9_value,
+	field9_result
+	)
+values(
+	#{id_complete},
+	#{id_medi},
+	#{id_user},
+	#{id_writer},
+	#{medi_name},
+	#{user_name},
+	#{writer_name},
+	
+	now(),
+	
+	#{field1_value},
+	#{field1_result},
+	#{field2_value},
+	#{field2_result},
+	
+	#{field3_value},
+	#{field3_result},
+	#{field4_value},
+	#{field4_result},
+	
+	#{field5_value},
+	#{field5_result},
+	#{field6_value},
+	#{field6_result},
+	
+	#{field7_value},
+	#{field7_result},
+	#{field8_value},
+	#{field8_result},
+	
+	#{field9_value},
+	#{field9_result}
+	);
+]]>
+</update>
+
+<select id="physics-complete-stats-user-count" parameterType="map" resultType="map">
+    <![CDATA[
+    select * from (
+    	select cast(@RNUM := @RNUM +1 as char) as rowcount,t.* from
+	(
+	SELECT
+	    hmpc.id_user, hmpc.user_name,
+        count(hmpc.field1_value) as field1_count, count(hmpc.field2_value) as field2_count, count(hmpc.field3_value) as field3_count,
+        count(hmpc.field4_value) as field4_count, count(hmpc.field5_value) as field5_count, count(hmpc.field6_value) as field6_count,
+        count(hmpc.field7_value) as field7_count, count(hmpc.field8_value) as field8_count, count(hmpc.field9_value) as field9_count,
+        count(date_complete) as today,
+        date_format(max(hmpc.date_complete), '%Y-%m-%d') as date_complete_fmt
+    FROM
+        heal_medi_physics_complete  hmpc
+	where
+	    (((#{id_user} is null) and true) or (hmpc.id_user = #{id_user})) and
+	    (((#{id_medi} is null) and true) or (hmpc.id_medi = #{id_medi})) and
+        ( date(hmpc.date_complete) <= date(#{date_stats_end}) and date(hmpc.date_complete) >= date(#{date_stats_start}) )
+	group by
+	    hmpc.id_user
+	) t,
+	(select @RNUM:=0)R )z
+    ]]>
+</select>
+
+<select id="physics-complete-stats-group-count" parameterType="map" resultType="map">
+    <![CDATA[
+select * from (
+    select cast(@RNUM := @RNUM +1 as char) as rowcount,t.* from
+	    (
+	        SELECT
+		        count(distinct(id_user)) as user_cnt, count(field1_value) as field1_count, count(field2_value) as field2_count,count(field3_value) as field3_count,
+		        count(field4_value) as field4_count,count(field5_value) as field5_count,count(field6_value) as field6_count,
+		        count(field7_value) as field7_count,count(field8_value) as field8_count,count(field9_value) as field9_count,
+		        count(date_complete) as today,
+		        date_format(max(date_complete), '%Y-%m-%d') as date_complete_fmt
+		    FROM
+		        heal_medi_physics_complete
+		    where
+		        ((#{id_medi} is null) and true) or (id_medi = #{id_medi}) and
+		        ( date(date_complete) <= date(#{date_stats_end}) and date(date_complete) >= date(#{date_stats_start}) )
+		    group by
+		        id_medi
+	) t,
+    (select @RNUM:=0)R
+)z
+    ;
+    ]]>
+</select>
+<select id="physics-user-gender" resultType="map" parameterType="map">
+select 
+	id ,gender
+from
+	artn_user
+where
+	id=#{id_user}
+;
+</select>
+<!-- 건강검진 (Medi Check) - 2013.12.21 by jhson [종료] -->
+
+<select id="physics-excel-field" parameterType="map" resultType="map">
+    <![CDATA[
+    select 
+        mcc.*,
+        mcf.field_name,
+        mcf.field_type,
+        mcf.field_label,
+        mcf.field_unit,
+        mcf.result_code,
+        mcf.field_label
+    from
+        heal_medi_physics_conf mcc
+        left outer join heal_medi_physics_field mcf
+        on mcc.id_medi_check_field = mcf.id
+    where
+        mcc.id_medi = #{id_medi}
+    order by
+        id_medi_check_field
+    ;
+    ]]>
+</select>
+<select id="physics-excel-data" parameterType="map" resultType="map">
+    <![CDATA[
+        SELECT
+            *, date_format(date_upload, '%Y-%m-%d') as date_upload_fmt 
+        FROM
+            heal_medi_physics_data
+        WHERE 
+            id_medi = #{id_medi} and
+            date_upload like concat(#{date_upload}, '%')
+        order by
+            id_complete asc,
+            user_name asc,
+            id_medi_check_field asc;
+    ]]>
+</select>
+
+</mapper>

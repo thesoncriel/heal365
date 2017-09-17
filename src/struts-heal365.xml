@@ -1,0 +1,461 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+    
+    <package name="movie" namespace="/movie" extends="artn-common">
+        <action name="list" class="artn.heal.controller.MovieAction" method="list">
+            <result>/WEB-INF/view/movie/list.jsp</result>
+        </action>
+        <action name="show" class="artn.heal.controller.MovieAction" method="show">
+            <result>/WEB-INF/view/movie/edit.jsp</result>
+        </action>
+        <action name="edit" class="artn.heal.controller.MovieAction" method="edit">
+            <result>/WEB-INF/view/movie/edit.jsp</result>
+        </action>
+        <action name="jsondata" class="artn.heal.controller.MovieAction" method="json">
+            <result>/WEB-INF/view/movie/json.jsp</result>
+        </action>
+        <action name="write" class="artn.heal.controller.MovieAction" method="write">
+            <result>/WEB-INF/view/movie/edit.jsp</result>
+        </action>
+        <action name="modify" class="artn.heal.controller.MovieAction" method="modify">
+            <result type="redirect">list?contents=${contents}</result>
+        </action>
+    </package>
+    
+    <package name="comb" namespace="/comb" extends="artn-common">
+        <action name="list" class="artn.heal.controller.CombAction" method="list">
+            <result>/WEB-INF/view/comb/list.jsp</result>
+        </action>
+        <action name="show" class="artn.heal.controller.CombAction" method="show">
+            <result>/WEB-INF/view/comb/edit.jsp</result>
+        </action>
+        <action name="edit" class="artn.heal.controller.CombAction" method="edit">
+            <result>/WEB-INF/view/comb/edit.jsp</result>
+        </action>
+        <action name="jsondata" class="artn.heal.controller.CombAction" method="json">
+            <result>/WEB-INF/view/comb/json.jsp</result>
+        </action>
+        <action name="write" class="artn.heal.controller.CombAction" method="write">
+            <result>/WEB-INF/view/comb/edit.jsp</result>
+        </action>
+        <action name="modify" class="artn.heal.controller.CombAction" method="modify">
+            <result type="redirect">show?id=${id}&amp;contents=${contents}</result>
+        </action>
+        <action name="searchContent" class="artn.heal.controller.CombAction" method="show">
+            <result type="redirect">/365plus/player.jsp?id=${showData.id}</result>
+        </action>
+        <action name="jsonlist" class="artn.heal.controller.CombAction" method="list">
+            <result>/WEB-INF/view/comb/jsonlist.jsp</result>
+        </action>
+        <action name="jsonsublist" class="artn.heal.controller.CombAction" method="combsublist">
+            <result>/WEB-INF/view/comb/jsonlist.jsp</result>
+        </action>
+    </package>
+    
+    <package name="comb365" namespace="/365plus" extends="artn-common">
+        <action name="list" class="artn.heal.controller.CombAction" method="list">
+            <result>/WEB-INF/view/365plus/list.jsp</result>
+        </action>
+        <action name="show" class="artn.heal.controller.CombAction" method="show">
+            <result>/WEB-INF/view/365plus/edit.jsp</result>
+        </action>
+        <action name="edit" class="artn.heal.controller.CombAction" method="edit">
+            <result>/WEB-INF/view/365plus/edit.jsp</result>
+        </action>
+        <action name="jsondata" class="artn.heal.controller.CombAction" method="json">
+            <result>json.jsp</result>
+        </action>
+        <action name="write" class="artn.heal.controller.CombAction" method="wirte">
+            <result type="redirect">list.action</result>
+        </action>
+        <action name="modify" class="artn.heal.controller.CombAction" method="modify">
+            <result type="redirect">show?id=${id}</result>
+        </action>
+        <action name="searchContent" class="artn.heal.controller.CombAction" method="searchOne">
+            <result type="redirect">/365plus/player.jsp?id=${showData.id}&amp;left_right=${showData.left_right_user}&amp;cate_movie1=${showData.cate_movie1}&amp;direction=${showData.direction}&amp;left_right=${showData.left_right}&amp;menu=${showData.menu}</result>
+        </action>
+    </package>
+    <package name="prescript" namespace="/prescript" extends="artn-common">
+    	<interceptors>
+    		<interceptor name="authPrescript" class="artn.heal.controller.AuthPrescriptInterceptor"></interceptor>
+    		<interceptor-stack name="prescriptStack">
+    			<interceptor-ref name="authPrescript"></interceptor-ref>
+    			<interceptor-ref name="defaultStack"></interceptor-ref>
+    		</interceptor-stack>
+    	</interceptors>
+    	<default-interceptor-ref name="prescriptStack"></default-interceptor-ref>
+    	
+    	<action name="list" class="artn.heal.controller.PrescriptAction" method="listAdmin">
+            <result>/WEB-INF/view/prescript/list.jsp</result>
+        </action>
+        <action name="listm" class="artn.heal.controller.PrescriptAction" method="listMediStaff">
+            <result>/WEB-INF/view/prescript/list.jsp</result>
+        </action>
+        <action name="listp" class="artn.heal.controller.PrescriptAction" method="listPatient">
+            <result>/WEB-INF/view/prescript/list.jsp</result>
+        </action>
+        
+        <action name="show" class="artn.heal.controller.PrescriptAction" method="show">
+            <result>/WEB-INF/view/prescript/show.jsp</result>
+        </action>
+        <action name="edit" class="artn.heal.controller.PrescriptAction" method="edit">
+            <result>/WEB-INF/view/prescript/edit.jsp</result>
+        </action>
+        <action name="modify" class="artn.heal.controller.PrescriptAction" method="modify">
+            <result name="input" type="chain">writeCombChain</result>
+            <result name="success" type="chain">modifyCombChain</result>
+        </action>
+        <action name="write" class="artn.heal.controller.PrescriptAction" method="write">
+        	<!-- <interceptor-ref name="authPrescript">
+        		<param name="auth">doctor</param>
+        	</interceptor-ref> -->
+            <result>/WEB-INF/view/prescript/edit.jsp</result>
+        </action>
+        <action name="delete" class="artn.heal.controller.PrescriptAction" method="delete">
+        	<result name="admin" type="redirect">list</result>
+        	<result name="mediStaff" type="redirect">listm</result>
+        </action>
+        
+        <action name="beforeList" class="artn.heal.controller.PrescriptAction" method="beforeList">
+            <result name="admin" type="redirect">list</result>
+            <result name="mediStaff" type="redirect">listm</result>
+        </action>
+        
+        <action name="writeCombChain" class="artn.heal.controller.CombAction" method="modify">
+            <result type="chain">beforeList</result>
+        </action>
+        <action name="modifyCombChain" class="artn.heal.controller.CombAction" method="modify">
+            <result type="redirect">show?id=${id_pres}</result>
+        </action>
+        
+        <!-- 처방전 통계 부분 -->
+        <action name="stats" class="artn.heal.controller.PrescriptAction" method="stats">
+            <result>/WEB-INF/view/prescript/stats.jsp</result>
+        </action>
+        <action name="statsPainSite" class="artn.heal.controller.PrescriptAction" method="statsPainSite">
+            <result>/WEB-INF/view/prescript/stats_pain_site.jsp</result>
+        </action>
+    </package>
+    <package name="player" namespace="/player" extends="artn-common">
+        <action name="player" class="artn.heal.controller.PlayerAction" method="show">
+            <result>/WEB-INF/view/player/player.jsp</result>
+        </action>
+        <action name="media" class="artn.heal.controller.PlayerAction" method="media">
+        	<!-- <result name="media">/WEB-INF/view/_common/stream.jsp</result> -->
+        	<result type="redirect">${redirectPath }</result>
+        </action>
+    </package> 
+    
+    <package name="mediQuestion" namespace="/medi/question" extends="artn-common">
+        <action name="list" class="artn.heal.controller.MediQuestionAction" method="list">
+            <result>/WEB-INF/view/medi/question/list.jsp</result>
+        </action>
+        <action name="show" class="artn.heal.controller.MediQuestionAction" method="show">
+            <result>/WEB-INF/view/medi/question/show.jsp</result>
+        </action>
+        <action name="write" class="artn.heal.controller.MediQuestionAction" method="write">
+            <result>/WEB-INF/view/medi/question/edit.jsp</result>
+        </action>
+        <action name="edit" class="artn.heal.controller.MediQuestionAction" method="edit">
+            <result>/WEB-INF/view/medi/question/edit.jsp</result>
+        </action>
+        <action name="modify" class="artn.heal.controller.MediQuestionAction" method="modify">
+            <result type="redirect">list?contents=${params.contents }</result>
+        </action>
+    </package>
+    
+    <!-- 건강검진업무 추가/변경 - 2013.12.21 by jhson [시작] -->
+    <package name="mediCheckField" namespace="/medicheck/field" extends="artn-common">
+    	<interceptors>
+    		<interceptor name="authMediCheck" class="artn.heal.controller.AuthMediCheckInterceptor"></interceptor>
+    		<interceptor-stack name="mediCheckStack">
+    			<interceptor-ref name="authMediCheck"></interceptor-ref>
+    			<interceptor-ref name="defaultStack"></interceptor-ref>
+    		</interceptor-stack>
+    	</interceptors>
+    	<default-interceptor-ref name="mediCheckStack"></default-interceptor-ref>
+    	
+        <action name="edit" class="artn.heal.controller.MediCheckFieldAction" method="edit">
+            <result>/WEB-INF/view/medicheck/field/edit.jsp</result>
+        </action>
+        <action name="show" class="artn.heal.controller.MediCheckFieldAction" method="show">
+            <result>/WEB-INF/view/medicheck/field/edit.jsp</result>
+        </action>
+        <action name="modify" class="artn.heal.controller.MediCheckFieldAction" method="modify">
+            <result type="redirect">edit?contents=${params.contents }</result>
+        </action>
+    </package>
+    
+    <package name="mediCheckConf" namespace="/medicheck/conf" extends="artn-common">
+    	<interceptors>
+    		<interceptor name="authMediCheck" class="artn.heal.controller.AuthMediCheckInterceptor"></interceptor>
+    		<interceptor-stack name="mediCheckStack">
+    			<interceptor-ref name="authMediCheck"></interceptor-ref>
+    			<interceptor-ref name="defaultStack"></interceptor-ref>
+    		</interceptor-stack>
+    	</interceptors>
+    	<default-interceptor-ref name="mediCheckStack"></default-interceptor-ref>
+    	
+    	<action name="list" class="artn.heal.controller.MediCheckConfAction" method="list">
+            <result>/WEB-INF/view/medicheck/conf/list.jsp</result>
+        </action>
+        <action name="edit" class="artn.heal.controller.MediCheckConfAction" method="edit">
+            <result>/WEB-INF/view/medicheck/conf/edit.jsp</result>
+        </action>
+        <action name="modify" class="artn.heal.controller.MediCheckConfAction" method="modify">
+            <result type="redirect">list?contents=${params.contents }</result>
+        </action>
+        <action name="complete_modify" class="artn.heal.controller.MediCheckConfAction" method="completeModify">
+            <result type="redirect">list?contents=${params.contents }</result>
+        </action>
+    </package>
+    
+    <package name="mediCheckProgress" namespace="/medicheck/progress" extends="artn-common">
+    	<interceptors>
+    		<interceptor name="authMediCheck" class="artn.heal.controller.AuthMediCheckInterceptor"></interceptor>
+    		<interceptor-stack name="mediCheckStack">
+    			<interceptor-ref name="authMediCheck"></interceptor-ref>
+    			<interceptor-ref name="defaultStack"></interceptor-ref>
+    		</interceptor-stack>
+    	</interceptors>
+    	<default-interceptor-ref name="mediCheckStack"></default-interceptor-ref>
+    
+    	<action name="list" class="artn.heal.controller.MediCheckProgressAction" method="list">
+            <result>/WEB-INF/view/medicheck/progress/list.jsp</result>
+        </action>
+        <action name="show" class="artn.heal.controller.MediCheckProgressAction" method="show">
+            <result>/WEB-INF/view/medicheck/progress/show.jsp</result>
+        </action>
+        <action name="edit" class="artn.heal.controller.MediCheckProgressAction" method="edit">
+            <result>/WEB-INF/view/medicheck/progress/edit.jsp</result>
+        </action>
+        <action name="write" class="artn.heal.controller.MediCheckProgressAction" method="write">
+            <result>/WEB-INF/view/medicheck/progress/edit.jsp</result>
+        </action>
+        <action name="modify" class="artn.heal.controller.MediCheckProgressAction" method="modify">
+            <result type="redirect">list?contents=${params.contents }</result>
+        </action>
+        <action name="delete" class="artn.heal.controller.MediCheckProgressAction" method="delete">
+            <result type="redirect">list?contents=${params.contents }</result>
+        </action>
+        <action name="complete" class="artn.heal.controller.MediCheckProgressAction" method="complete">
+            <result type="redirect">list?contents=${params.contents }</result>
+        </action>
+    </package>
+    
+    <package name="mediCheckComplete" namespace="/medicheck/complete" extends="artn-common">
+    	<interceptors>
+    		<interceptor name="authMediCheck" class="artn.heal.controller.AuthMediCheckInterceptor"></interceptor>
+    		<interceptor-stack name="mediCheckStack">
+    			<interceptor-ref name="authMediCheck"></interceptor-ref>
+    			<interceptor-ref name="defaultStack"></interceptor-ref>
+    		</interceptor-stack>
+    	</interceptors>
+    	<default-interceptor-ref name="mediCheckStack"></default-interceptor-ref>
+    
+    	<action name="list" class="artn.heal.controller.MediCheckCompleteAction" method="list">
+            <result>/WEB-INF/view/medicheck/complete/list.jsp</result>
+        </action>
+        <action name="show" class="artn.heal.controller.MediCheckCompleteAction" method="show">
+            <result>/WEB-INF/view/medicheck/complete/show.jsp</result>
+        </action>
+        <action name="edit" class="artn.heal.controller.MediCheckCompleteAction" method="edit">
+            <result>/WEB-INF/view/medicheck/complete/edit.jsp</result>
+        </action>
+        <!-- <action name="write" class="artn.heal.controller.MediCheckCompleteAction" method="write">
+            <result>/WEB-INF/view/medicheck/complete/edit.jsp</result>
+        </action>
+        <action name="modify" class="artn.heal.controller.MediCheckCompleteAction" method="modify">
+            <result type="redirect">list?contents=${params.contents }</result>
+        </action> -->
+        <action name="write" class="artn.heal.controller.MediCheckProgressAction" method="write">
+            <result>/WEB-INF/view/medicheck/complete/edit.jsp</result>
+        </action>
+        <action name="modify" class="artn.heal.controller.MediCheckProgressAction" method="modify">
+            <result type="redirect">list?contents=${params.contents }</result>
+        </action>
+        <action name="delete" class="artn.heal.controller.MediCheckCompleteAction" method="delete">
+            <result type="redirect">list?contents=${params.contents }</result>
+        </action>
+        <action name="stats" class="artn.heal.controller.MediCheckCompleteAction" method="stats">
+            <result>/WEB-INF/view/medicheck/complete/stats.jsp</result>
+        </action>        
+    </package>
+    <!-- 건강검진업무 추가/변경 - 2013.12.21 by jhson [종료] -->
+    
+    <!-- 물리치료 업무 추가/변경 Create By. BrunoSong 2013.12.27 [시작]  -->
+    <package name="physicsField" namespace="/physics/field" extends="artn-common">
+    	<interceptors>
+    		<interceptor name="authMediCheck" class="artn.heal.controller.AuthMediCheckInterceptor"></interceptor>
+    		<interceptor-stack name="mediCheckStack">
+    			<interceptor-ref name="authMediCheck"></interceptor-ref>
+    			<interceptor-ref name="defaultStack"></interceptor-ref>
+    		</interceptor-stack>
+    	</interceptors>
+    	<default-interceptor-ref name="mediCheckStack"></default-interceptor-ref>
+    	
+        <action name="edit" class="artn.heal.controller.PhysicsFieldAction" method="edit">
+            <result>/WEB-INF/view/physics/field/edit.jsp</result>
+        </action>
+        <action name="show" class="artn.heal.controller.PhysicsFieldAction" method="show">
+            <result>/WEB-INF/view/physics/field/edit.jsp</result>
+        </action>
+        <action name="modify" class="artn.heal.controller.PhysicsFieldAction" method="modify">
+            <result type="redirect">edit?contents=${params.contents }</result>
+        </action>
+    </package>
+    
+    <package name="physicsConf" namespace="/physics/conf" extends="artn-common">
+    	<interceptors>
+    		<interceptor name="authMediCheck" class="artn.heal.controller.AuthMediCheckInterceptor"></interceptor>
+    		<interceptor-stack name="mediCheckStack">
+    			<interceptor-ref name="authMediCheck"></interceptor-ref>
+    			<interceptor-ref name="defaultStack"></interceptor-ref>
+    		</interceptor-stack>
+    	</interceptors>
+    	<default-interceptor-ref name="mediCheckStack"></default-interceptor-ref>
+    	
+    	<action name="list" class="artn.heal.controller.PhysicsConfAction" method="list">
+            <result>/WEB-INF/view/physics/conf/list.jsp</result>
+        </action>
+        <action name="edit" class="artn.heal.controller.PhysicsConfAction" method="edit">
+            <result>/WEB-INF/view/physics/conf/edit.jsp</result>
+        </action>
+        <action name="modify" class="artn.heal.controller.PhysicsConfAction" method="modify">
+            <result type="redirect">list?contents=${params.contents }</result>
+        </action>
+        <action name="complete_modify" class="artn.heal.controller.PhysicsConfAction" method="completeModify">
+            <result type="redirect">list?contents=${params.contents }</result>
+        </action>
+    </package>
+    
+    <package name="physicsProgress" namespace="/physics/progress" extends="artn-common">
+    	<interceptors>
+    		<interceptor name="authMediCheck" class="artn.heal.controller.AuthMediCheckInterceptor"></interceptor>
+    		<interceptor-stack name="mediCheckStack">
+    			<interceptor-ref name="authMediCheck"></interceptor-ref>
+    			<interceptor-ref name="defaultStack"></interceptor-ref>
+    		</interceptor-stack>
+    	</interceptors>
+    	<default-interceptor-ref name="mediCheckStack"></default-interceptor-ref>
+    
+    	<action name="list" class="artn.heal.controller.PhysicsProgressAction" method="list">
+            <result>/WEB-INF/view/physics/progress/list.jsp</result>
+        </action>
+        <action name="show" class="artn.heal.controller.PhysicsProgressAction" method="show">
+            <result>/WEB-INF/view/physics/progress/show.jsp</result>
+        </action>
+        <action name="edit" class="artn.heal.controller.PhysicsProgressAction" method="edit">
+            <result>/WEB-INF/view/physics/progress/edit.jsp</result>
+        </action>
+        <action name="write" class="artn.heal.controller.PhysicsProgressAction" method="write">
+            <result>/WEB-INF/view/physics/progress/edit.jsp</result>
+        </action>
+        <action name="modify" class="artn.heal.controller.PhysicsProgressAction" method="modify">
+            <result type="redirect">list?contents=${params.contents }</result>
+        </action>
+        <action name="delete" class="artn.heal.controller.PhysicsProgressAction" method="delete">
+            <result type="redirect">list?contents=${params.contents }</result>
+        </action>
+        <action name="complete" class="artn.heal.controller.PhysicsProgressAction" method="complete">
+            <result type="redirect">list?contents=${params.contents }</result>
+        </action>
+    </package>
+    
+    
+    <package name="physicsComplete" namespace="/physics/complete" extends="artn-common">
+    	<interceptors>
+    		<interceptor name="authMediCheck" class="artn.heal.controller.AuthMediCheckInterceptor"></interceptor>
+    		<interceptor-stack name="mediCheckStack">
+    			<interceptor-ref name="authMediCheck"></interceptor-ref>
+    			<interceptor-ref name="defaultStack"></interceptor-ref>
+    		</interceptor-stack>
+    	</interceptors>
+    	<default-interceptor-ref name="mediCheckStack"></default-interceptor-ref>
+    
+    	<action name="list" class="artn.heal.controller.PhysicsCompleteAction" method="list">
+            <result>/WEB-INF/view/physics/complete/list.jsp</result>
+        </action>
+        <action name="show" class="artn.heal.controller.PhysicsCompleteAction" method="show">
+            <result>/WEB-INF/view/physics/complete/show.jsp</result>
+        </action>
+        <action name="edit" class="artn.heal.controller.PhysicsCompleteAction" method="edit">
+            <result>/WEB-INF/view/physics/complete/edit.jsp</result>
+        </action>
+        <!-- <action name="write" class="artn.heal.controller.MediCheckCompleteAction" method="write">
+            <result>/WEB-INF/view/medicheck/complete/edit.jsp</result>
+        </action>
+        <action name="modify" class="artn.heal.controller.MediCheckCompleteAction" method="modify">
+            <result type="redirect">list?contents=${params.contents }</result>
+        </action> -->
+        <action name="write" class="artn.heal.controller.PhysicsProgressAction" method="write">
+            <result>/WEB-INF/view/physics/complete/edit.jsp</result>
+        </action>
+        <action name="modify" class="artn.heal.controller.PhysicsProgressAction" method="modify">
+            <result type="redirect">list?contents=${params.contents }</result>
+        </action>
+        <action name="delete" class="artn.heal.controller.PhysicsCompleteAction" method="delete">
+            <result type="redirect">list?contents=${params.contents }</result>
+        </action>
+        <action name="stats" class="artn.heal.controller.PhysicsCompleteAction" method="stats">
+            <result>/WEB-INF/view/physics/complete/stats.jsp</result>
+        </action>        
+    </package>
+    
+    <!-- End BrunoSong [종료] -->
+    <package name="heal365Default" namespace="/" extends="artn-common">
+        <action name="healMediUser" class="artn.heal.controller.Heal365DefaultAction" method="healMediUser">
+            <result type="redirect">/groupuser/list?contents=${params.contents}&amp;id_group=${idMedi}</result>
+        </action>
+    </package>
+    
+    <package name="heal365User" namespace="/mediuser" extends="artn-common">
+        <action name="list" class="artn.heal.controller.MediUserAction" method="list">
+            <result>/WEB-INF/view/mediuser/list.jsp</result>
+        </action>
+        <action name="show" class="artn.heal.controller.MediUserAction" method="show">
+            <result>/WEB-INF/view/mediuser/show.jsp</result>
+        </action>
+        <action name="write" class="artn.heal.controller.MediUserAction" method="write">
+            <result>/WEB-INF/view/mediuser/join.jsp</result>
+        </action>
+        <action name="modify" class="artn.heal.controller.MediUserAction" method="modify">
+            <result type="redirect">/groupuser/list?contents=${params.contents}&amp;id_group=${params.id_group}</result>
+        </action>
+        <action name="showPatient" class="artn.heal.controller.MediUserAction" method="showPatient"/>
+        <action name="showMediStaff" class="artn.heal.controller.MediUserAction" method="showMediStaff"/>
+    </package>
+    
+    <package name="mediStats" namespace="/medistats" extends="artn-common">
+        <action name="totalstats" class="artn.heal.controller.MediStatsAction" method="totalStats">
+            <result>/WEB-INF/view/medistats/totalstats.jsp</result>
+        </action>
+    </package>
+    <package name="personalMedi" namespace="/medistats/personal" extends="artn-common">
+        <action name="list" class="artn.heal.controller.MediStatsAction" method="list">
+            <result>/WEB-INF/view/medistats/personal/list.jsp</result>
+        </action>
+        <action name="stats" class="artn.heal.controller.MediStatsAction" method="stats">
+            <result>/WEB-INF/view/medistats/personal/stats.jsp</result>
+        </action>
+    </package>
+    
+    <package name="heal365" namespace="/heal365" extends="artn-common">
+        <action name="saveIdMedi" class="artn.heal.controller.Heal365DefaultAction" method="saveIdMedi"/>
+    </package>
+    
+    <package name="attendanceResult" namespace="/attdResult" extends="artn-common">
+        <action name="excel" class="artn.heal.controller.AttendanceResultAction" method="excel">
+            <result type="stream">
+            <param name="inputName">inputStream</param>
+            <param name="contentDisposition">attachment;filename=${fileName}</param>
+            <param name="bufferSize">4096</param>
+            </result>
+        </action>
+    </package>
+    
+</struts>

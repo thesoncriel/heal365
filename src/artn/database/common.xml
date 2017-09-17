@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="artn.common">
+        <select id="common-inserted-id" parameterType="map" resultType="map">
+        <![CDATA[
+select LAST_INSERT_ID() as id;
+        ]]>
+        </select>
+  <select id="common-inserted-id-int" resultType="java.lang.Integer">
+        <![CDATA[
+select LAST_INSERT_ID() as id;
+        ]]>
+        </select>
+  
+
+
+  <update id="log">
+      <![CDATA[
+  	insert into
+  		heal_log
+  		values(
+  			#{id}, '', '', now(), #{div}, #{id_cont}
+  		);
+	]]>
+  </update>
+
+
+
+<!-- 통합 게시판 -->
+<!-- 
+  <select id="board-single" parameterType="map" resultType="map">
+	<![CDATA[
+		select *
+		from 
+			heal_board
+		where
+			id = #{id};
+	]]>
+  </select>
+  <select id="board-all" parameterType="map" resultType="map">
+  <![CDATA[
+  		select id, board_type, category, subject, uploader, content, date_format(date_upload, '%Y-%m-%d') date_upload, file_image, file_upload,
+			(select count(*) from heal_board
+			where
+				( ((#{board_type} is null) and (board_type = 'A')) or (board_type = #{board_type}) ) and
+  				( ((#{subject} is null) and (subject like '%')) or (subject like concat('%', #{subject}, '%') ) )
+			) as row_count
+  		from heal_board
+  		where
+  			( ((#{board_type} is null) and (board_type = 'A')) or (board_type = #{board_type}) ) and
+  			( ((#{subject} is null) and (subject like '%')) or (subject like concat('%', #{subject}, '%') ) )
+		order by
+			date_upload desc, id desc
+  		limit 
+			#{offset}, #{rowlimit};
+	]]>
+  </select>
+  <update id="board-modify" parameterType="map">
+  <![CDATA[
+	  replace into 
+		heal_board(
+			id, board_type, category, subject, uploader, content, date_upload, file_image, file_upload
+			) 
+		values(
+			#{id}, #{board_type}, #{category}, #{subject}, #{uploader}, #{content}, now(), #{file_image}, #{file_upload}
+		);
+	]]>
+  </update>
+   -->
+  
+  <!-- 통합 서비스 게시판 -->
+  <select id="service-single" parameterType="map" resultType="map">
+    <![CDATA[
+        select *
+        from 
+            heal_service
+        where
+            id = #{id};
+    ]]>
+  </select>
+  <select id="service-all" parameterType="map" resultType="map">
+  <![CDATA[
+        select id, group_name, name, phone, email, url, service_type, subject, content, date_format(date_upload, '%Y-%m-%d') date_upload,
+        (select count(*) from heal_service
+            where
+                ( ((#{service_type} is null) and (service_type = 'A')) or (service_type = #{service_type}) ) and
+                ( ((#{subject} is null) and (subject like '%')) or (subject like concat('%', #{subject}, '%') ) )
+            ) as row_count
+        from heal_service
+        where 
+        ( ((#{service_type} is null) and (service_type = 'A')) or (service_type = #{service_type}) ) and
+        ( ((#{subject} is null) and (subject like '%')) or (subject like concat('%', #{subject}, '%') ) )
+        order by
+            date_upload desc, id desc
+        limit 
+            #{offset}, #{rowlimit};
+    ]]>
+  </select>
+  <update id="service-modify" parameterType="map">
+  <![CDATA[
+      replace into 
+        heal_service(
+            id, group_name, name, phone, email, url, service_type, subject, content, date_upload
+            ) 
+        values(
+            #{id}, #{group_name}, #{name}, #{phone}, #{email}, #{url}, #{service_type}, #{subject}, #{content}, now()
+        );
+    ]]>
+  </update>
+  
+</mapper>

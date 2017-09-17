@@ -1,0 +1,210 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>HTML5 MediaElement</title>	
+	
+	<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>	
+	<script src="../mediaelement-and-player.min.js"></script>
+	<!--<script src="testforfiles.js"></script>	-->
+	<link rel="stylesheet" href="../mediaelementplayer.min.css" />
+</head>
+<body>
+
+<h1>MediaElementPlayer.js</h1>
+
+<h2>1. Single MP4 File</h2>
+
+<code><pre>
+&lt;video width="640" height="360" src="../media/echo-hereweare.mp4" type="video/mp4" 
+	id="player1" poster="../media/echo-hereweare.jpg" 
+	controls="controls" preload="none"&gt;&lt;/video&gt;
+</pre></code>
+
+<!-- simple single file method -->
+<video width="640" height="360" src="../media/echo-hereweare.mp4" type="video/mp4" 
+	id="player1" poster="../media/echo-hereweare.jpg" 
+	controls="controls" preload="none"></video>
+	
+<span id="player1-mode"></span>
+
+<p><b>Note</b>: if you are working with local files, you'll need to add your working directory
+to the <a href="http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager04.html">Flash Global Security Settings</a>.</p>
+
+<h2>2. Multi-Codec with no JavaScript fallback player</h2>
+
+<code><pre>
+&lt;video width="640" height="360" id="player2" poster="../media/echo-hereweare.jpg" controls="controls" preload="none"&gt;
+	&lt;!-- MP4 source must come first for iOS --&gt;
+	&lt;source type="video/mp4" src="../media/echo-hereweare.mp4" /&gt;
+	&lt;!-- WebM for Firefox 4 and Opera --&gt;
+	&lt;source type="video/webm" src="../media/echo-hereweare.webm" /&gt;
+	&lt;!-- OGG for Firefox 3 --&gt;
+	&lt;source type="video/ogg" src="../media/echo-hereweare.ogv" /&gt;
+	&lt;!-- Fallback flash player for no-HTML5 browsers with JavaScript turned off --&gt;
+	&lt;object width="640" height="360" type="application/x-shockwave-flash" data="../build/flashmediaelement.swf"&gt; 		
+		&lt;param name="movie" value="../build/flashmediaelement.swf" /&gt; 
+		&lt;param name="flashvars" value="controls=true&amp;poster=../media/echo-hereweare.jpg&amp;file=../media/echo-hereweare.mp4" /&gt; 		
+		&lt;!-- Image fall back for non-HTML5 browser with JavaScript turned off and no Flash player installed --&gt;
+		&lt;img src="../media/echo-hereweare.jpg" width="640" height="360" alt="Here we are" 
+			title="No video playback capabilities" /&gt;
+	&lt;/object&gt; 	
+&lt;/video&gt;
+</pre></code>
+
+<video width="640" height="360" id="player2" poster="../media/echo-hereweare.jpg" controls="controls" preload="none">
+	<!-- MP4 source must come first for iOS -->
+	<source type="video/mp4" src="../media/echo-hereweare.mp4" />
+	<!-- WebM for Firefox 4 and Opera -->
+	<source type="video/webm" src="../media/echo-hereweare.webm" />
+	<!-- OGG for Firefox 3 -->
+	<source type="video/ogg" src="../media/echo-hereweare.ogv" />
+	<!-- Fallback flash player for no-HTML5 browsers with JavaScript turned off -->
+	<object width="640" height="360" type="application/x-shockwave-flash" data="../build/flashmediaelement.swf"> 		
+		<param name="movie" value="../build/flashmediaelement.swf" /> 
+		<param name="flashvars" value="controls=true&amp;file=../media/echo-hereweare.mp4" /> 		
+		<!-- Image fall back for non-HTML5 browser with JavaScript turned off and no Flash player installed -->
+		<img src="../media/echo-hereweare.jpg" width="640" height="360" alt="Here we are" 
+			title="No video playback capabilities" />
+	</object> 	
+</video>
+
+<span id="player2-mode"></span>
+
+<input type="button" id="button_src" value="소스 변경"/>
+<br/>
+<br/>
+<!-- 
+poster="../media/big_buck_bunny.jpg"
+-->
+<section>
+<article>
+<video width="360" height="203" id="player3" controls="controls">
+
+	<source src="/player/media?path=/media/mp4/&fileName=e_0009.mp4" type="video/mp4">
+	
+	
+</video>
+</article>
+</section>
+
+<script>
+
+var player = /*$("#player2").mediaelementplayer();//*/new MediaElementPlayer("#player2",{
+	success : function(mediaElement, domObject, player){
+		//mediaElement
+		//alert("하하하하");
+		mediaElement.addEventListener("ended", function(){
+			//alert("끝");
+			mediaElement.setSrc("../media/0003_test.mp4");
+			mediaElement.load();
+			mediaElement.play();
+		}, false);
+	}
+});
+
+var index = 0;
+var jqVideo = null;
+
+$("#player3").data("sample", "오호호^^");
+
+//$("#player3").html("<source src=\"../media/A-17.mp3\" type=\"audio/mp3\"/><source src=\"../media/E-3.ogg\" type=\"audio/ogg\"/>");
+
+var player3 = new MediaElementPlayer("#player3", {
+	features: ['playpause','progress','current','duration','tracks','volume','fullscreen'],
+	success : function(mediaElement, domObject, player){
+		
+		jqVideo = $(domObject);
+		console.log( jqVideo.data("sample") );
+		console.log("ㄹㄹㄹ");
+		
+		jqVideo.attr("poster", "/player/media?path=/media/img/&fileName=h_0005.jpg");
+		mediaElement.setSrc([
+			
+			{src: "/player/media?path=/media/ogg/&fileName=H-3.ogg", type: "audio/ogg"},
+			{src: "/player/media?path=/media/mp3/&fileName=H-4.mp3", type: "audio/mp3"}
+		]);
+		
+		console.log( mediaElement );
+		mediaElement.load();
+		mediaElement.play();
+		
+		/*
+		mediaElement.setSrc([
+			{src: "../media/0006(3).webm", type: "video/webm"},
+			{src: "../media/big_buck_bunny.mp4", type: "video/mp4"}
+		]);
+		*/
+		
+		mediaElement.addEventListener("ended", function(){
+		
+			console.log( $(this).data("sample") + "::캬캭::" );
+		
+			switch(index){
+				case 0: mediaElement.setSrc([{src: "/player/media?path=/media/webm/&fileName=e_0002.webm", type: "video/webm"}, {src: "/player/media?path=/media/mp4/&fileName=e_0001.mp4", type: "video/mp4"}]); break;
+				case 1: mediaElement.setSrc("/player/media?path=/media/mp3/&fileName=H-1.mp3"); jqVideo.attr("poster", "/player/media?path=/media/img/&fileName=e_0016.jpg"); break;
+				case 2: mediaElement.setSrc("/player/media?path=/media/mp4/&fileName=e_0009.mp4"); break;
+				case 3:
+				case 4:
+					mediaElement.setCurrentTime(0); break;
+				case 5: mediaElement.setSrc("/player/media?path=/media/mp3/&fileName=H-12.mp3"); jqVideo.attr("poster", "/player/media?path=/media/img/&fileName=e_0005.jpg"); break;
+				case 6: mediaElement.setSrc("/player/media?path=/media/mp4/&fileName=h_0009.mp4"); break;
+				case 7: mediaElement.pause(); break;
+			}
+			
+			mediaElement.load();
+			mediaElement.play();
+			console.log(mediaElement.paused);
+			index++;
+		}, false);
+	}
+});
+
+/*
+player3.setSrc( "../media/aa.mp3" );
+//player3.setSrc([{src: "../media/aa.mp3", type: "audio/mp3"}]);
+player3.load();
+player3.play();
+*/
+
+
+$("#button_src").click(function(){
+	//player.pause();
+	player.setSrc("../media/0003_test.mp4");
+	player.load();
+	player.play();
+});
+
+/*$('audio,video').mediaelementplayer({
+	success: function(player, node) {
+		$("#button_src").click({player: player}, function(e){
+			var me = e.data.player;
+			me.stop();
+			me.setSrc("../media/big_buck_bunny.mp4");
+			me.setCurrentTime(0);
+			me.loadeddata(function(){
+				this.play();
+			});
+		});
+		$('#' + node.id + '-mode').html('mode: ' + player.pluginType);
+	}
+});
+*/
+</script>
+
+<input type="button" id="stopall" value="Stop all"><br/>
+
+
+<script>
+$('#stopall').click(function() {
+    $('video, audio').each(function() {
+          $(this)[0].player.pause();		  
+    });
+});
+
+
+</script>
+
+
+</body>
+</html>

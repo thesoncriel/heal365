@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="artn.common">
+
+<!-- 구매 내역 목록 -->
+<update id="purchase-modify" parameterType="map">
+  <![CDATA[
+        replace into
+            artn_purchase
+        values(
+            #{id_purchase},
+            #{id_product},
+            #{id_payment},
+            #{purchase_seq},
+            #{id_user},
+            
+            #{pay_user_name},
+            #{pay_phone},
+            #{subject},
+            #{opt},
+            #{opt_detail},
+            
+            #{opt_indices},
+            #{price},
+            #{price_opt},
+            #{product_count},
+            #{sum_price},
+            
+            #{file_img},
+            #{date_start},
+            #{date_end},
+            #{status},
+            #{coupon_detail},
+            
+            #{coupon_downcost},
+            #{date_confirm},
+            #{transaction_num},
+            #{delivery_num}
+            );
+    ]]>
+</update>
+
+<select id="purchase-all" parameterType="map" resultType="map">
+    <![CDATA[
+        select *,
+	        date_format(date_start, '%Y년 %m월 %d일') as date_start_fmt,
+	        date_format(date_end, '%Y년 %m월 %d일') as date_end_fmt,
+	        date_format(date_confirm, '%Y년 %m월 %d일') as date_confirm_fmt,    
+            (select 
+                count(*)
+            from 
+                artn_purchase
+            where
+           ]]>
+           <if test="Guest">
+                pay_user_name = #{pay_user_name} and
+                pay_phone = #{pay_phone} and
+           </if>
+           <![CDATA[
+                (((#{id_user} is null) and true) or (id_user = #{id_user})) and
+                (((#{id_payment} is null) and true) or (id_payment = #{id_payment})) and
+                ( ((#{search_div} is null) or (#{search_text} = '')) or
+                  ((#{search_div} = '') and (#{search_text} != '')) or
+                  ((#{search_div} = 'pay_user_name') and (pay_user_name like concat('%', #{search_text}, '%')) ) or
+                  ((#{search_div} = 'id_user') and (id_user = #{search_text})) or
+                  ((#{search_div} = 'delivery_num') and (delivery_num = #{search_text})) or
+                  ((#{search_div} = 'id_payment') and (id_payment = #{search_text})) ) and
+           ]]>
+           <if test="inicancel != 'inicancel'">
+                (((#{status} is null) and true) or (status = #{status})) and
+           </if>
+           <![CDATA[    
+                (((#{date} is null) and true) or (date_start between #{date} and now()))
+            ) as row_count
+        from
+            artn_purchase
+        WHERE
+        ]]>
+           <if test="Guest">
+                pay_user_name = #{pay_user_name} and
+                pay_phone = #{pay_phone} and
+           </if>
+        <![CDATA[
+            (((#{id_user} is null) and true) or (id_user = #{id_user})) and
+            (((#{id_payment} is null) and true) or (id_payment = #{id_payment})) and
+            ( ((#{search_div} is null) or (#{search_text} = '')) or
+              ((#{search_div} = '') and (#{search_text} != '')) or
+              ((#{search_div} = 'pay_user_name') and (pay_user_name like concat('%', #{search_text}, '%')) ) or
+              ((#{search_div} = 'id_user') and (id_user = #{search_text})) or
+              ((#{search_div} = 'delivery_num') and (delivery_num = #{search_text})) or
+              ((#{search_div} = 'id_payment') and (id_payment = #{search_text})) ) and
+        ]]>
+        <if test="inicancel != 'inicancel'">
+                (((#{status} is null) and true) or (status = #{status})) and
+        </if>
+        <![CDATA[    
+            (((#{date} is null) and true) or (date_start between #{date} and now()))
+        order by 
+            id_purchase desc
+    ]]>
+</select>
+
+<select id="purchase-stats" parameterType="map" resultType="map">
+<!--      <![CDATA[
+        select *,
+        	date_format(date_confirm, '%Y-%c-%d') date_confirm_fm,
+        	sum(sum_price) total_price 
+        	from artn_purchase 
+        where ( date_format(date_confirm, '%Y-%c-%d') >= #{date_sales_start} )and
+        	  	( date_format(date_confirm, '%Y-%c-%d') <= #{date_sales_end} )	         	
+     ]]>
+     	<if test="id_user">
+     	and id_user = #{id_user}
+     	</if>
+    <![CDATA[    	
+        group by status
+    ]]>
+    	<if test="id_user">
+    		,id_user
+    	</if>
+    ; -->
+<!--      <![CDATA[
+    	select a.*, b.*,
+			date_format(a.date_upload, '%Y-%c-%d') date_upload_fm
+	    from artn_purchase_history as a
+		left outer join artn_purchase as b
+			on a.id_purchase = b.id_purchase
+	    where ( ( a.date_upload >= '2013-10-01 00:00:00' ) and
+				( a.date_upload <= '2013-11-30 23:59:59' ) ) and
+				(a.status = -2)	
+		group by date_upload_fm
+		having date_upload_fm is not null
+    ]]> -->
+<![CDATA[
+    select *,date_format(date_upload, '%Y-%c-%d') date_upload_fm, sum(sum_price) total_price  
+		from artn_purchase_history
+		where 
+			( (((#{date_sales_start} is null) or (#{date_sales_start} = '')) and (date_add(now(), INTERVAL -1 month)) )
+			or (date_upload between #{date_sales_start} and #{date_sales_end}))
+			and ( ((#{status} is null) and (status=10) ) or (status = #{status}))
+		group by date_upload_fm 
+		;
+]]>
+</select>
+
+<select id="purchase-stats-user" parameterType="map" resultType="map">
+    <![CDATA[
+        select *,
+        	date_format(date_upload, '%Y-%c-%d') date_upload_fm,
+        	sum(sum_price) total_price 
+        		from artn_purchase_history
+        	where
+        		id_user = #{id}
+        	and ( ((#{status} is null) and true) or (status = #{status}))		 
+        	group by id_user,id_purchase
+        ;
+    ]]>
+</select>
+
+<select id="purchase-stats-browser" parameterType="map" resultType="map">
+    <![CDATA[
+       select *,round(a.cnt/a.total_cnt*100,2) percent 
+			from(
+				select *,count(*) cnt,(select count(*)from artn_statistics_visitor_site) total_cnt
+			from artn_statistics_visitor_site
+		GROUP BY browser_version, browser_name) a
+        ;
+    ]]>
+</select>
+
+<select id="purchase-single" parameterType="map" resultType="map">
+    <![CDATA[
+        select *
+        from
+            artn_purchase
+        where
+            (((#{id_purchase} is null) and true) or (id_purchase = #{id_purchase}))
+        ;
+    ]]>
+</select>
+<delete id="purchase-delete" parameterType="map">
+    delete from
+        artn_purchase
+    where
+        id_purchase = #{id_purchase}
+    ;
+</delete>
+<update id="purchase-update" parameterType="map">
+    update
+        artn_purchase
+    set
+        status = #{status}
+		<if test="delivery_num">
+		        ,delivery_num = #{delivery_num}
+		</if>
+    where
+        id_purchase = #{id_purchase}
+    ;    
+</update>
+<!-- 구매 내역 기록 -->
+<select id="purchase-history-single" parameterType="map" resultType="map">
+    <![CDATA[
+        select *
+        from
+            artn_purchase_history
+        where
+            ( (((#{id_purchase} is null) and true) or (id_purchase = #{id_purchase})) and
+              (((#{id_user} is null) and true) or (id_user = #{id_user})) )
+        ;
+    ]]>
+</select>
+
+<select id="purchase-history-all" parameterType="map" resultType="map">
+    <![CDATA[
+        select *,
+            (CASE WHEN status = '1' THEN '입금 대기' WHEN status = '2' THEN '입금 확인' WHEN status = '3' THEN '배송 중'
+                  WHEN status = '4' THEN '배송 완료' WHEN status = '10' THEN '구매 완료' WHEN status = '-2' THEN '구매 취소' 
+                  WHEN status = '-3' THEN '환불 요청' WHEN status = '-4' THEN '교환 요청' WHEN status = '-9' THEN '교환 완료' 
+                  WHEN status = '-10' THEN '환불 완료' END) as status_kor,
+            date_format(date_upload, '%Y년 %m월 %d일') as date_upload_fmt,
+            ( select count(*)
+              from 
+                  artn_purchase_history
+              where
+	              (((#{id_purchase} is null) and true) or (id_purchase = #{id_purchase})) and
+	              (((#{id_user} is null) and true) or (id_user = #{id_user})) and
+	              (((#{search_status} is null) and true) or (status = #{search_status})) and
+	              (((#{date} is null) and true) or (date_upload between #{date} and now())) and
+	              ( ((#{search_div} is null) or (#{search_text} = '')) or
+	                ((#{search_div} = '') and (#{search_text} != '')) or
+	                ((#{search_div} = 'id_purchase') and (id_purchase = #{search_text})) or
+	                ((#{search_div} = 'id_user') and (id_user = #{search_text})) or
+	                ((#{search_div} = 'delivery_num') and (delivery_num = #{search_text}))
+	              )
+            ) as row_count
+        from
+            artn_purchase_history
+        where
+            ( (((#{id_purchase} is null) and true) or (id_purchase = #{id_purchase})) and
+              (((#{id_user} is null) and true) or (id_user = #{id_user})) and
+              (((#{search_status} is null) and true) or (status = #{search_status})) and
+              (((#{date} is null) and true) or (date_upload between #{date} and now())) and
+              ( ((#{search_div} is null) or (#{search_text} = '')) or
+              ((#{search_div} = '') and (#{search_text} != '')) or
+              ((#{search_div} = 'id_purchase') and (id_purchase = #{search_text})) or
+              ((#{search_div} = 'id_user') and (id_user = #{search_text})) or
+              ((#{search_div} = 'delivery_num') and (delivery_num = #{search_text})) )
+            )
+        order by
+            date_upload ${order}
+        limit
+            #{offset},#{rowlimit}
+        ;
+    ]]>
+</select>
+
+<update id="purchase-history-modify" parameterType="map">
+    <![CDATA[
+        insert into
+            artn_purchase_history
+        values(
+            #{id},
+            #{id_purchase},
+            #{id_user},
+            #{status},
+            #{sum_price},
+            
+            #{date_upload},
+            #{delivery_num}
+        );
+    ]]>
+</update>
+
+
+
+
+
+
+
+</mapper>

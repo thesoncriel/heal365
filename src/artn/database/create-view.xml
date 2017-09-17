@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="artn.heal.database">
+	<update id="heal-movie-file-view">
+		<![CDATA[
+		create or replace view heal_movie_file_view as
+		select id, movie_code,
+			subject, date_format(date_upload, '%Y-%m-%d') as date_upload, /* %H:%M:%S = 시간 추가 시*/
+			file_webm, file_mp4, file_ogg, file_mp3, file_mp4narr, ori_mp4narr, file_img, file_smi, 
+			ori_webm, ori_mp4, ori_ogg, ori_mp3, ori_img, ori_smi,
+			use_cnt, vas_low, vas_high, cate_movie,
+			substring(cate_movie, 1, 2) as cate_movie0,
+			cast(substring(cate_movie, 3, 2) as unsigned) as cate_movie1,
+			cast(substring(cate_movie, 5, 1) as unsigned) as cate_movie2,
+			cast(substring(cate_movie, 6, 4) as unsigned) as cate_movie3,
+			/*(cate_sub & 1) as cate_sub1*/
+			cate_sub_loc, cate_sub_tool, cate_sub_mode, cate_sub_part, cate_sub_mecha,
+			
+			id as id_movie,
+			subject as subject_movie,
+			1 as repeat_cnt,
+			1 as nth,
+			'' as left_right,
+			'' as popup,
+			'' as popup_msg,
+			'' as popup_action
+		from
+			heal_movie_file
+		order by
+			id desc;
+		]]>
+	</update>
+	
+	<update id="heal-comb-view">
+		<![CDATA[
+			create or replace view heal_comb_view as
+			select
+				ch.id,
+				ch.subject, id_user, ch.id_group,
+				date_format(ch.date_upload, '%Y-%m-%d') as date_upload,
+				ch.cate_movie,
+				substring(ch.cate_movie, 1, 2) as cate_movie0,
+				cast(substring(ch.cate_movie, 3, 2) as unsigned) as cate_movie1,
+				cast(substring(ch.cate_movie, 5, 1) as unsigned) as cate_movie2,
+				cast(substring(ch.cate_movie, 6, 4) as unsigned) as cate_movie3,
+				substring(ch.cate_movie, 12, 1) as left_right,
+				ch.vas_high,
+				usr.name as name_uploader,
+				mf.file_img,
+				group_concat(mf.subject, '|') as subject_movie,
+				ch.use_cnt
+			from 
+				heal_comb_header as ch
+				left outer join artn_user usr
+				on ch.id_user = usr.id
+				left outer join heal_comb_cont cc
+				on ch.id = cc.id_comb and (cc.seq between 1 and 3)
+				left outer join heal_movie_file mf
+				on cc.id_movie = mf.id
+			group by
+				ch.id
+			;
+		]]>
+	</update>
+	
+	<update id="heal-comb-view-detail">
+		<![CDATA[
+			create or replace view heal_comb_view_detail as
+			select
+				ch.id,
+				ch.subject, id_user,
+				date_format(ch.date_upload, '%Y-%m-%d') as date_upload,
+				ch.cate_movie,
+				substring(ch.cate_movie, 1, 2) as cate_movie0,
+				cast(substring(ch.cate_movie, 3, 2) as unsigned) as cate_movie1,
+				cast(substring(ch.cate_movie, 5, 1) as unsigned) as cate_movie2,
+				cast(substring(ch.cate_movie, 6, 4) as unsigned) as cate_movie3,
+				ch.vas_high,
+				usr.name as name_uploader,
+				ch.use_cnt
+			from 
+				heal_comb_header as ch
+				left outer join artn_user usr
+				on ch.id_user = usr.id
+				left outer join heal_comb_cont cc
+				on ch.id = cc.id_comb
+				left outer join heal_movie_file mf
+				on cc.id_movie = mf.id
+			group by
+				ch.id
+			;
+		]]>
+	</update>
+	
+	<update id="heal-comb-view-detail-sub">
+		<![CDATA[
+			create or replace view heal_comb_view_detail_sub as
+			select 
+		        `cc`.`id_comb` AS `id_comb`,
+		        `cc`.`seq` AS `seq`,
+		        `mf`.`subject` AS `subject_movie`,
+		        `mf`.`file_img` AS `file_img`,
+		        `mf`.`file_webm` AS `file_webm`,
+		        `mf`.`file_mp4` AS `file_mp4`,
+		        `mf`.`file_ogg` AS `file_ogg`,
+		        `mf`.`file_mp3` AS `file_mp3`,
+		        `mf`.`file_mp4narr` AS `file_mp4narr`,
+		        `cc`.`id_movie` AS `id_movie`,
+		        `cc`.`repeat_cnt` AS `repeat_cnt`,
+		        `cc`.`nth` AS `nth`,
+		        `cc`.`left_right` AS `left_right`,
+		        `cc`.`popup` AS `popup`,
+		        `cc`.`popup_msg` AS `popup_msg`,
+		        `cc`.`popup_action` AS `popup_action`
+		    from
+		        (`wellness`.`heal_comb_cont` `cc`
+		        left join `wellness`.`heal_movie_file` `mf` ON ((`cc`.`id_movie` = `mf`.`id`)));
+		]]>
+	</update>
+	
+	<update id="heal-user-view-detail">
+		<![CDATA[
+			create or replace view heal_user_view_detail as
+			select 
+			    usr.*,
+			    year(now()) - year(usr.date_birth) 
+			        - (datediff(
+			            concat(
+			                year(now()), '-', 
+			                month(usr.date_birth), '-', 
+			                day(usr.date_birth)
+			            ), now() ) > 0) as age,
+			    (CASE WHEN usr.gender = 'm' THEN '남자' ELSE '여자' END) as gender_kor,
+			    medi.name as medi_name,
+			    corp.id as id_corp,
+			    corp.name as corp_name
+			from 
+			    heal_user usr
+			    left outer join heal_group medi
+			    on usr.id_medi = medi.id
+			    left outer join heal_group corp
+			    on usr.group_id = corp.id
+			;
+		]]>
+	</update>
+	
+	<update id="heal-prescript-view">
+		<![CDATA[
+			create or replace view heal_prescript_view as
+            select
+                ph.*,
+                (case when ph.status = 0 then '의사 진단중' when ph.status = 1 then '운동사 진단중' else '진단 완료' end) as status_kor,
+                pc.id_comb,
+                cast(concat(ch.vas_low, '-', ch.vas_high) as char) as vas,
+                usr.name as user_name,
+                usr2.name as therap_name,
+                (CASE WHEN usr.gender = 'm' THEN '남자' ELSE '여자' END) as user_gender,
+                usr.date_birth as date_birth,
+                usr.phone_mobi as phone_mobi,
+                date_format(ph.date_upload, '%Y-%m-%d') as date_upload_fmt,
+                date_format(ph.date_end, '%Y-%m-%d') as date_end_fmt
+            from
+                heal_prescript_header as ph
+                left outer join heal_prescript_comb as pc
+                on ph.id = pc.id_pres
+                left outer join heal_comb_header as ch
+                on pc.id_comb = ch.id
+                left outer join artn_user usr
+                on ph.id_user = usr.id
+                left outer join artn_user usr2
+                on ph.id_therap = usr2.id
+            order by
+                ph.status asc,
+                ph.id desc,
+                ph.date_upload desc
+            ;
+		]]>
+	</update>
+	
+	<update id="heal-prescript-view-detail">
+		<![CDATA[
+			create or replace view heal_prescript_view_detail as
+            select
+                ph.*,
+                pc.*,
+                cast(lpad(ph.id, 4, 0) as char) as id_fmt,
+                cast(lpad(ph.id_medi, 3, 0) as char) as id_medi_fmt,
+                medi.name as medi_name,
+                
+                usr.name as user_name,
+                usr.gender_kor as user_gender_kor,
+                usr.date_birth as user_date_birth,
+                usr.age as user_age,
+                usr.phone_home as user_phone_home,
+                usr.phone_mobi as user_phone_mobi,
+                usr.zipcode_home as user_zipcode_home,
+                usr.address_home1 as user_address_home1,
+                usr.address_home2 as user_address_home2,
+            
+                dctr.user_name as doctor_name,
+                dctr.group_name as doctor_medi,
+                dctr.id_group as doctor_medi_id,
+                
+                thrp.user_name as therap_name,
+                thrp.group_name as therap_medi,
+            
+                ch.subject as subject_comb,
+                cast(concat(ch.vas_low, '-', ch.vas_high) as char) as vas,
+                cast(substring(ch.cate_movie, 3, 2) as unsigned) as cate_movie1,
+                
+                date_format(ph.date_upload, '%Y-%m-%d') as date_upload_fmt,
+                date_format(ph.date_end, '%Y-%m-%d') as date_end_fmt,
+                (case when ph.continued = 1 then '예' else '아니오' end) as continued_kor
+            from
+                heal_prescript_header as ph
+                left outer join artn_group as medi
+                on ph.id_medi = medi.id
+                left outer join artn_user_view as usr
+                on ph.id_user = usr.id
+                left outer join artn_group_user_view as dctr
+                on ph.id_doctor = dctr.id_user
+                left outer join artn_group_user_view as thrp
+                on ph.id_therap = thrp.id_user
+                left outer join heal_prescript_comb as pc
+                on ph.id = pc.id_pres
+                left outer join heal_comb_header as ch
+                on pc.id_comb = ch.id
+            ;
+		]]>
+	</update>
+	
+	<update id="heal-prescript-view-detail-sub">
+		<![CDATA[
+			create or replace view heal_prescript_view_detail_sub as
+			select 
+			    pc.id_pres,
+			    cvds.*
+			from 
+			    heal_prescript_comb pc
+			    inner join heal_comb_view_detail_sub cvds
+			    on pc.id_comb = cvds.id_comb
+			;
+		]]>
+	</update>
+	
+	<update id="heal-prescript-view-stats">
+		<![CDATA[
+			create or replace view heal_prescript_view_stats as
+			select *,
+				cate_movie1 as pain_site,
+				cast(concat( (floor(user_age / 10) * 10), '대') as char) as user_age_group,
+				(case
+				when cate_movie1 = 1 then '목'
+				when cate_movie1 = 2 then '어깨'
+				when cate_movie1 = 3 then '팔꿈치'
+				when cate_movie1 = 4 then '허리'
+				when cate_movie1 = 5 then '엉덩이'
+				when cate_movie1 = 6 then '무릎'
+				when cate_movie1 = 7 then '발목'
+				else '기타'
+				end) as pain_site_kor
+			from heal_prescript_view_detail
+			where
+			id_medi > 0 and
+			id > 0
+			;
+		]]>
+	</update>
+</mapper>

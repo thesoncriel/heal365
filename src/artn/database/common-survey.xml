@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="artn.common">
+
+<select id="survey-all" parameterType="map" resultType="map">
+<![CDATA[
+   select 
+			* ,
+			date_format(date_upload, '%Y-%m-%d') as date_upload_fmt,
+			date_format(date_start, '%Y-%m-%d') as date_start_fmt,
+			date_format(date_end, '%Y-%m-%d') as date_end_fmt,
+			(select count(*) from artn_survey where ( ((#{id} is null) and true) or (id = #{id}) )) as row_count  
+			from artn_survey 
+	where
+			( ((#{id} is null) and true) or (id = #{id}) ) 
+	Limit 	#{offset}, #{rowlimit};
+			;
+]]>
+</select>
+
+<update id="survey-modify" parameterType="map">
+  <![CDATA[
+        replace into
+            artn_survey
+        values(
+            #{id},
+            #{question_count},
+            #{work_type},
+            #{subject},
+            now(),
+            
+            #{id_group},
+            #{id_writer},
+            #{writer_name},
+            #{date_start},
+            #{date_end},
+            
+            #{opt}
+            );
+    ]]>
+</update>
+
+<update id="survey-question-modify" parameterType="map">
+  <![CDATA[
+        replace into
+            artn_survey_question
+        values(
+            #{id},
+            #{id_survey},
+            #{seq},
+            #{work_type},
+            
+            #{question_cont},
+            #{question_type},
+            #{question_item}
+            );
+    ]]>
+</update>
+
+<update id="survey-answer-modify" parameterType="map">
+  <![CDATA[
+        replace into
+            artn_survey_answer
+        values(
+            #{id},
+            #{id_survey},
+            #{id_question},
+            #{seq},
+            #{work_type},
+            #{answer_int},
+            #{answer_text},
+            #{id_user},
+            #{user_name},
+            now()
+            );
+    ]]>
+</update>
+
+<!--   -->
+<select id="survey-single" parameterType="map" resultType="map">
+  <![CDATA[
+        select a.*,
+        		date_format(a.date_upload, '%Y-%m-%d') as date_upload_fmt,
+				date_format(a.date_start, '%Y-%m-%d') as date_start_fmt,
+				date_format(a.date_end, '%Y-%m-%d') as date_end_fmt,
+				b.id_survey,
+				b.id as id_question,
+				b.seq,
+				b.question_cont,
+				b.question_type,
+				b.question_item
+			from artn_survey a, artn_survey_question b
+		where 1=1
+		and a.id = b.id_survey
+		and ( ((#{id} is null) and true) or (a.id = #{id}) )
+		and ( ((#{work_type} is null) and true) or (a.work_type = #{work_type}) )
+;
+    ]]>
+</select>
+
+<select id="survey-answer-single" parameterType="map" resultType="map">
+  <![CDATA[
+        select 
+        	*,
+        	 date_format(date_add(date_upload, INTERVAL 1 month),'%Y-%m-%d') date_upload_fmt 
+        from artn_survey_answer
+		where 
+			date_format(date_upload, '%Y-%m-%d') = 
+			(
+			select date_format(max(date_upload), '%Y-%m-%d') from artn_survey_answer
+		where 
+			( ((#{id_user} is null) and true) or (id_user = #{id_user}) ) 
+		and	( ((#{work_type} is null) and true) or (work_type = #{work_type}) ) 	
+			)
+		and	( ((#{id_user} is null) and true) or (id_user = #{id_user}) )
+		and ( ((#{work_type} is null) and true) or (work_type = #{work_type}) )
+;
+    ]]>
+</select>
+<delete id="survey-question-delete" parameterType="map">
+    <![CDATA[
+        delete from
+            artn_survey_question
+        where
+        	id_survey = #{id_survey}
+        ;
+	]]>  
+</delete>
+
+</mapper>

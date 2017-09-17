@@ -1,0 +1,539 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="artn.common">
+
+<!-- 게시판 -->
+<!-- <resultMap id="reply-result-map" type="java.util.HashMap">
+	<result property="id" column="id"/>
+	<result property="id_user" column="id_user"/>	
+	<association property="stat_list" column="id=id, id_user=id_user" select="board-reply-sub"/>
+	 resultMap="reply-result-map" 
+</resultMap> -->
+
+<select id="board-reply" parameterType="java.util.Map" resultType="map">
+<![CDATA[
+	select
+		 MIN(id)-1 id		 		 
+	from artn_board
+	where
+		( ( id < #{id} AND id > (#{id} - 1000) ) OR (id=#{id}) )
+		;
+	]]>
+</select>
+
+<select id="board-reply-re" parameterType="java.util.Map" resultType="map">
+<![CDATA[
+	select
+		 MIN(#{id})-1 id		 		 
+	from artn_board
+		;
+	]]>
+</select>
+
+<insert id="board-reply-sub" parameterType="map">
+ <![CDATA[
+	insert into
+	artn_board
+	values(
+		#{id}
+		,#{id_user}
+		,#{user_name}
+		,#{password}
+		,#{depth}
+		,#{subject}
+		,#{board_no}
+		
+		,#{date_upload}
+		,now()
+		,#{view_count}
+		,#{comment_count}
+		,#{good_count}
+		
+		,#{bad_count}		
+		,#{status}
+		,#{keywords}
+		,#{category}
+		,#{contents}
+		
+		,#{contents_summary}
+		,#{file_img}
+	);
+]]>
+</insert>
+
+ <update id="board-reply-update" parameterType="map">
+  	<![CDATA[
+  		UPDATE
+  			artn_board
+  		SET
+  			id = id - 1
+  		WHERE
+  			( (id < #{id}) and (id > ceil(#{id}/1000)*1000-1000) )
+  	]]>
+  </update>
+  
+  <select id="board-single" parameterType="map" resultType="map">
+	<![CDATA[
+		select *
+			,replace(replace(date_format(date_upload, '%Y년 %m월 %d일 %p %h:%i'),'AM','오전'),'PM','오후') date_upload_fmt
+		from 
+			artn_board
+		where
+			id = #{id};
+	]]>
+  </select>
+  
+    <select id="board-all" parameterType="map" resultType="map">
+  <![CDATA[
+  		select 
+  			id
+			,id_user
+			,user_name
+			,password
+			,depth
+			,subject
+			,board_no
+			
+			,date_format(date_upload, '%Y-%m-%d') date_upload_fmt
+			,date_format(date_update, '%Y-%m-%d') date_update_fmt
+			,view_count
+			,comment_count
+			,good_count
+			
+			,bad_count			
+			,status
+			,keywords
+			,category						
+			,contents_summary
+			,file_img
+			,(select count(*) from artn_board
+			where
+				( ((#{board_no} is null) and (board_no = 1)) or (board_no = #{board_no}) ) and  				
+  				(
+  					( (#{search_text} is null) and true ) or
+  					( ((#{search_div}='subject')) and (subject like concat('%', #{search_text}, '%') ) ) or 
+  					( ((#{search_div}='contents') and (contents like concat('%', #{search_text}, '%') ) ) ) 
+  				) and
+  				status != 64
+			) as row_count
+  		from artn_board
+  		where
+  			( ((#{board_no} is null) and (board_no = 1)) or (board_no = #{board_no}) ) and
+  			(
+				( (#{search_text} is null) and true ) or
+				( ((#{search_div}='subject')) and (subject like concat('%', #{search_text}, '%') ) ) or 
+				( ((#{search_div}='contents') and (contents like concat('%', #{search_text}, '%') ) ) ) 
+			) and
+  			status != 64
+		order by
+			id desc, case when depth>0 then date_update END desc
+  		limit 
+			#{offset}, #{rowlimit};
+	]]>
+  </select>
+  
+  <insert id="board-write" parameterType="map">
+  <![CDATA[
+   insert into
+    artn_board
+		(
+			id
+			,id_user
+			,user_name
+			,password
+			,depth
+			,subject
+			,board_no
+			
+			,date_upload
+			,date_update
+			,view_count
+			,comment_count
+			,good_count
+			
+			,bad_count			
+			,status
+			,keywords
+			,category
+			,contents
+						
+			,contents_summary
+			,file_img
+		)
+			SELECT 1000 + COALESCE((SELECT MAX(ABS(id)) FROM artn_board), 0)
+			,#{id_user}
+			,#{user_name}
+			,#{password}
+			,#{depth}
+			,#{subject}			
+			,#{board_no}
+			
+			,#{date_upload}
+			,now()
+			,#{view_count}
+			,#{comment_count}
+			,#{good_count}
+			
+			,#{bad_count}			
+			,#{status}
+			,#{keywords}
+			,#{category}
+			,#{contents}
+			
+			,#{contents_summary}
+			,#{file_img}
+;						
+	
+  ]]>
+  </insert>
+  
+  <update id="board-modify" parameterType="map">
+  <![CDATA[
+	  replace into
+	    artn_board
+	    values(
+	         #{id}
+			,#{id_user}
+			,#{user_name}
+			,#{password}
+			,#{depth}
+			,#{subject}
+			,#{board_no}
+			
+			,#{date_upload}
+			,now()
+			,#{view_count}
+			,#{comment_count}
+			,#{good_count}
+			,#{bad_count}			
+			
+			,#{status}
+			,#{keywords}
+			,#{category}
+			,#{contents}
+			
+			,#{contents_summary}
+			,#{file_img}
+	    );
+  ]]>
+  </update>
+  
+  <update id="board-delete" parameterType="map">
+  	<![CDATA[
+  		UPDATE
+  			artn_board
+  		SET
+  			status = 64
+  		WHERE
+  			( (#{id}%1000 = 0) and (id > 0) and (id <= #{id} and id > #{id} - 1000) ) or
+  			( (#{id}%1000 > 0) and (id = #{id}) );
+  	]]>
+  </update>
+
+<!-- 게시판 첨부파일-->
+<insert id="board-attach-write" parameterType="map">
+  <![CDATA[
+    insert into
+    artn_board_attach
+		(
+			id_board
+			,seq
+			,file_name
+			,ori_name
+			,date_upload
+			,size_file
+			,down_count			
+		)
+			SELECT COALESCE((SELECT MAX(id) FROM artn_board), 0)
+	       ,#{seq}
+	       ,#{file_name}
+	       ,#{ori_name}
+	       ,#{date_upload}
+	       ,#{size_file}
+	       ,#{down_count}
+;
+  ]]>
+  </insert>
+  
+  <update id="board-attach-modify" parameterType="map">
+  <![CDATA[
+  replace into
+  	artn_board_attach
+  	set
+  		id_board = #{id}
+		,seq = #{seq}
+		,file_name = #{file_name}
+		,ori_name = #{ori_name}
+		,date_upload = #{date_upload}
+		,size_file = #{size_file}
+		,down_count = #{down_count}
+  	;
+  ]]>
+  </update>
+  
+  <update id="board-attach-delete" parameterType="map">
+  <![CDATA[
+	  update
+	  	artn_board_attach
+	  set
+	  	seq = seq * -1
+	  where
+	  	id = #{id}
+	  ;
+  ]]>
+  
+  </update>
+<update id="board-attach-re-modify" parameterType="map">
+  <![CDATA[
+	  update
+	  	artn_board_attach
+	  set
+	  	id_board = id_board-1
+	  where
+	  	id_board = #{id_board}
+	  ;
+  ]]>
+  
+  </update>
+  
+<select id="board-attach-list-sub" parameterType="map" resultType="map">
+  <![CDATA[
+  	select id_board from
+	  	artn_board_attach
+	where 
+		( (#{id_board}%1000 = 0) and (id_board > 0) and (id_board < #{id_board} and id_board > #{id_board} - 1000) ) or
+		( (#{id_board}%1000 > 0) and (id_board = #{id_board}) );
+		
+  ]]>	 
+  </select> 
+  
+  <select id="board-attach-list" parameterType="map" resultType="map">
+  <![CDATA[
+  	select *
+		from 
+			artn_board_attach
+		where
+			id_board = #{id} and
+			seq > 0
+		;
+  ]]>	 
+  </select> 
+  
+  <update id="board-counting" parameterType="map">
+  <![CDATA[
+  update 
+    artn_board
+  set
+  	view_count = view_count + 1
+  where
+  	id = #{id}
+;
+  ]]>
+  </update>   
+  
+  <update id="board-attach-modify-downcnt-increase" parameterType="map">
+  <![CDATA[
+  update 
+    artn_board_attach
+  set
+  	down_cnt = down_cnt + 1
+  where
+  	id = #{id}
+;
+  ]]>
+  </update>
+  
+  <update id="board-status-modify" parameterType="map">
+  <![CDATA[
+  update 
+    artn_board
+  set
+  	status = status #{bitOper} (status | #{bitValue})
+  where
+  	id = #{id}
+;
+  ]]>
+  </update>
+  
+  <update id="board-comment-count" parameterType="map">
+  <![CDATA[
+	update 
+	    artn_board
+	  set
+	  	comment_count = comment_count + 1
+	  where
+	  	id = #{id_board}
+	;
+  ]]>
+  </update>
+  
+  <update id="board-comment-delete-count" parameterType="map">
+  <![CDATA[
+	update 
+	    artn_board
+	  set
+	  	comment_count = comment_count - 1
+	  where
+	  	id = #{id}
+	;
+  ]]>
+  </update>  
+<!-- 게시판 댓글 -->
+    <select id="board-comment-all" parameterType="map" resultType="map">
+  <![CDATA[
+  		select id
+  			,parent_id
+			,id_board
+			,id_user
+			,user_name
+			,seq
+			,depth
+			,date_format(date_update, '%Y-%m-%d') date_update_fmt
+			,replace(replace(date_format(date_update, '%Y년 %m월 %d일 %p %h:%i'),'AM','오전'),'PM','오후') date_update_kor  
+			,good_count
+			,bad_count
+			,status
+			,comment
+			,user_img
+			,user_ip,
+			(select count(*) from artn_board_comment
+			where
+				id_board=#{id} 
+				and id > 0
+			) as row_count
+  		from artn_board_comment
+  		where
+  			id_board=#{id}
+  			and id > 0  			
+		order by
+			id asc  		
+	]]>
+	<!-- limit 
+			#{offset}, #{rowlimit}; -->
+  </select>
+	
+<select id="board-comment-max" parameterType="java.util.Map" resultType="map">
+<![CDATA[
+	SELECT 1 + COALESCE((SELECT MAX(ABS(id)) FROM artn_board_comment), 0) id;
+	]]>
+</select>	
+	
+  <insert id="board-comment-write" parameterType="map">
+  <![CDATA[
+  insert into 
+    artn_board_comment(
+    	id
+    	,parent_id
+    	,id_board
+    	,id_user
+    	,user_name
+    	,seq
+    	,depth
+    	,date_update
+    	,good_count
+    	,bad_count
+    	,status
+    	,comment
+    	,user_img
+    	,user_ip
+    )
+    values(
+         #{id}
+        ,#{comment_id}
+        ,#{id_board}
+        ,#{id_user}
+        ,#{user_name}
+        ,#{seq}
+        ,#{depth}
+        ,#{date_update}
+        ,#{good_count}
+        ,#{bad_count}
+        ,#{status}
+        ,#{comment}
+        ,#{user_img}
+        ,#{user_ip}
+    );
+  ]]>
+  </insert>
+  
+   <update id="board-comment-update" parameterType="map">
+  	<![CDATA[
+  		UPDATE
+  			artn_board_comment
+  		SET
+  			id = id + 1
+  		WHERE
+  			id >= #{id}  			
+		ORDER BY id DESC  			
+  		;
+  	]]>
+  </update>
+  
+<select id="board-comment-reply" parameterType="java.util.Map" resultType="map">
+<![CDATA[
+	select
+		 MAX(id)+1 id		 		 
+	from artn_board_comment
+	where
+		(parent_id=#{comment_id} and
+		depth = #{depth} + 1) or (id=#{comment_id})	
+	;
+	]]>
+</select>
+  
+  <update id="board-comment-modify" parameterType="map">
+  <![CDATA[
+  		UPDATE
+  			artn_board_comment
+  		SET
+  			comment = #{comment}
+  			,date_update = now()
+  		WHERE
+  			id = #{comment_id}
+  	]]>
+  </update>
+  
+  <update id="board-comment-delete" parameterType="map">
+  	<![CDATA[
+  		UPDATE
+  			artn_board_comment
+  		SET
+  			id = id * -1
+  		WHERE
+  			id = #{comment_id}
+  	]]>
+  </update>
+  
+  <update id="board-reply-modify" parameterType="map">
+  <![CDATA[
+  replace into 
+    artn_board_comment
+    values(
+        #{id}, #{id_board}, #{id_user}, #{seq}, #{seq_reply}, #{date_update}, #{count_good}, #{count_bad}, #{status}, #{content_reply}
+    );
+  ]]>
+  </update>
+  
+  <select id="board-all-mini" parameterType="map" resultType="map">
+  <![CDATA[
+        select
+            id
+            ,category 
+            ,subject
+            ,date_format(date_upload, '%Y-%m-%d') date_upload_fmt
+            ,date_format(date_update, '%Y-%m-%d') date_update_fmt
+        from artn_board
+        where
+            ( ((#{board_no} is null) and (board_no = 1)) or (board_no = #{board_no}) ) and
+            id > 0 and
+            depth = 0
+        order by
+            id desc
+        limit 
+            #{offset}, #{rowlimit};
+  ]]>
+  </select>
+  
+</mapper>

@@ -1,0 +1,10 @@
+@charset "utf-8";
+/* CSS Document */
+
+.section .article h2{
+	/*font-family: 'NanumMyeongjoExtraBold' sans-serif;*/
+}
+
+.section .article p{
+	letter-spacing: normal;
+}

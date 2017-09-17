@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="artn.common">
+  
+<!-- 병원/의료기관 정보 및 사용자 그룹 정보 -->
+  <select id="group-single" parameterType="map" resultType="map">
+  <![CDATA[
+		select *,
+			date_format(date_estab, '%Y년 %m월 %d일') date_estab_kor
+		from 
+			artn_group
+		where
+			id = #{id};
+  ]]>
+  </select>
+  <select id="group-all" parameterType="map" resultType="map">
+  <![CDATA[
+  		select *,
+  			date_format(date_create, '%Y-%m-%d') as date_create_fmt,
+			(select count(*) from artn_group
+			where
+  				( ((#{search_div} is null) or (#{search_text} = '')) and (id >= 0) ) or
+  				( (#{search_div} = 'name') and (name like concat('%', #{search_text}, '%')) ) or
+  				( (#{search_div} = 'address1') and (address_group1 like concat('%', #{search_text}, '%')) )
+  					
+			) as row_count
+  		from artn_group
+  		where
+  				( ((#{search_div} is null) or (#{search_text} = '')) and (id >= 0) ) or
+  				( (#{search_div} = 'name') and (name like concat('%', #{search_text}, '%')) ) or
+  				( (#{search_div} = 'address1') and (address_group1 like concat('%', #{search_text}, '%')) )				
+		order by
+			id desc
+  		limit 
+			#{offset}, #{rowlimit};
+	]]>
+  </select>
+  <update id="group-modify" parameterType="map">
+  <![CDATA[
+	  replace into 
+		artn_group		
+		values(
+			#{id}, 
+			#{name}, #{phone_group}, #{phone_fax}, #{homepage}, #{group_type}, 
+			#{date_estab}, #{date_create}, #{map_coord}, #{map_url}, #{file_img},
+			#{file_banner}, #{zipcode_group}, #{address_group_new}, #{address_group1}, #{address_group2},
+			#{introduce}
+		);
+	]]>
+  </update>
+  <update id="group-delete" parameterType="map">
+  <![CDATA[
+	  update 
+		artn_group
+	  set
+	  	id = id * -1
+	  where
+	  	id = #{id}
+	  ;
+	]]>
+  </update>
+    <select id="group-company-list" parameterType="map" resultType="map">
+  <![CDATA[
+        select 
+            id, name
+        from 
+            artn_group
+        ;
+  ]]>
+  </select>
+  
+  
+  <select id="group-user-single" parameterType="map" resultType="map">
+  <![CDATA[
+		select *
+		from 
+			artn_group_user_view
+		where
+			(id > 0) and
+			/*그룹 사용자 정보 ID*/
+            ( ((#{id} is null) and true) or (id = #{id}) ) and
+			/*그룹 ID*/
+			( ((#{id_group} is null) and true) or (id_group = #{id_group}) ) and
+            /*사용자 ID*/
+            ( ((#{id_user} is null) and true) or (id_user = #{id_user}) ) and
+            /*그룹 형태*/
+            ( ((#{group_type} is null) and true) or ( (group_type & #{group_type}) > 0) )
+        ;
+  ]]>
+  </select>
+  <select id="group-user-all" parameterType="map" resultType="map">
+  <![CDATA[
+		select *, date_format(date_join, '%Y-%m-%d') as date_join_fmt,
+			(select count(*) from artn_group_user_view
+			where
+				( ( ((#{search_div} is null) or (#{search_text} = '')) and true ) or
+				( (#{search_div} = 'group_name') and (group_name like concat('%', #{search_text}, '%') ) ) or
+	            ( (#{search_div} = 'id_user') and (id_user like concat('%', #{search_text}, '%') ) ) or
+	            ( (#{search_div} = 'user_name') and (user_name like concat('%', #{search_text}, '%') ) ) ) and
+	            
+                /*사용자 대상*/
+                ( ((#{id_user} is null) and true) or (id_user like concat('%', #{id_user}, '%') ) ) and
+                /*그룹 대상*/
+                ( ((#{id_group} is null) and true) or (id_group = #{id_group}) ) and
+                /*그룹 대상 (권한 선택용)*/
+                ( ((#{id_group_target} is null) and true) or (id_group = #{id_group}) ) and
+                /*특정 권한*/
+                ( ((#{auth_group} is null) and true) or ( (auth_group & #{auth_group}) > 0 ) ) and
+                /*그룹명*/
+                ( ((#{group_name} is null) and true) or (group_name like concat('%', #{group_name}, '%') ) ) and
+                /*사용자명*/
+                ( ((#{user_name} is null) and true) or (user_name like concat('%', #{user_name}, '%') ) ) and
+                /*그룹 가입 날짜*/
+                ( ( ((#{date_low} is null) or (#{date_low} = '')) and true) or (date_join between #{date_low} and #{date_high}) ) and
+                id > 0
+			) as row_count
+  		from artn_group_user_view
+  		where
+  		        ( ( ((#{search_div} is null) or (#{search_text} = '')) and true ) or
+  		        ( (#{search_div} = 'group_name') and (group_name like concat('%', #{search_text}, '%') ) ) or
+                ( (#{search_div} = 'id_user') and (id_user like concat('%', #{search_text}, '%') ) ) or
+                ( (#{search_div} = 'user_name') and (user_name like concat('%', #{search_text}, '%') ) ) ) and
+                
+            	/*사용자 대상*/
+                ( ((#{id_user} is null) and true) or (id_user like concat('%', #{id_user}, '%') ) ) and
+                /*그룹 대상*/
+                ( ((#{id_group} is null) and true) or (id_group = #{id_group}) ) and
+                /*그룹 대상 (권한 선택용)*/
+                ( ((#{id_group_target} is null) and true) or (id_group = #{id_group}) ) and
+                /*특정 권한*/
+                ( ((#{auth_group} is null) and true) or ( (auth_group & #{auth_group}) > 0 ) ) and
+                /*그룹명*/
+                ( ((#{group_name} is null) and true) or (group_name like concat('%', #{group_name}, '%') ) ) and
+                /*사용자명*/
+                ( ((#{user_name} is null) and true) or (user_name like concat('%', #{user_name}, '%') ) ) and
+                /*그룹 가입 날짜*/
+                ( ( ((#{date_low} is null) or (#{date_low} = '')) and true) or (date_join between #{date_low} and #{date_high}) ) and
+                id > 0
+                
+		order by
+			auth_group desc, date_join desc
+  		limit 
+			#{offset}, #{rowlimit};
+  ]]>
+  </select>
+  <update id="group-user-modify" parameterType="map">
+  <![CDATA[
+	  replace into 
+		artn_group_user
+		values(
+			#{id}, 
+			#{id_user}, 
+			#{id_group}, 
+			#{date_join}, 
+			#{auth_group_id}, 
+			#{opt},
+			#{comment}
+		);
+	]]>
+  </update>
+  <update id="group-user-delete" parameterType="map">
+  <![CDATA[
+	  update 
+		artn_group_user
+	  set
+	  	auth_group_id = auth_group_id * -1
+	  where
+	  	id = #{id}
+	  ;
+	]]>
+  </update>
+  <select id="approver-user-all" parameterType="map" resultType="map">
+  <![CDATA[
+		select *
+		from 
+			artn_group_user_view
+		where
+			(id > 0) and			
+			/*그룹 ID*/
+			( ((#{id_group} is null) and true) or (id_group = #{id_group}) ) and
+			/*그룹 권한*/
+			( (auth_group & 0x2000) > 0)
+        ;
+  ]]>
+  </select>
+</mapper>

@@ -1,0 +1,409 @@
+/*처방전 보기 시작*/
+.prescript .section { border: 2px solid #ccc; margin-bottom: 20px;}
+
+.prescript table {width: 100%; font-size: 10pt;}
+
+.prescript table, .prescript td, .prescript th {border-collapse: collapse; border: 1px solid #ccc;}
+
+.prescript table tr {height: 30px;}
+
+.prescript th, .prescript td {padding-left: 0.5em;}
+
+.prescript th {width: 115px;  text-align: left; background-color: #eee;}
+
+.prescript td.tight {padding: 0;}
+
+.prescript input.tight {width: 98%;}
+
+.prescript textarea {width: 98%;}
+
+.prescript-movie-list th{text-align: center; padding: 0;}
+.prescript-movie-list th._seq{ width: 30px; }
+.prescript-movie-list th._thumb{ width: 80px; }
+.prescript-movie-list th._subject{ width: auto; }
+.prescript-movie-list th._repeat-cnt{ width: 70px; }
+
+.prescript-movie-list td { text-align: center; }
+.prescript-movie-list td._subject { text-align: left; }
+.prescript-movie-list td._thumb{ padding: 0; }
+/*처방전 보기 종료*/
+
+
+/*운동처방 영상 목록*/
+.sotable-list {
+	margin-top: /*-4*/10px;
+	width: 100%;
+	height: 320px;
+	overflow: scroll;
+}
+
+.sotable-list li{
+	width: 95%;
+	margin-bottom: 10px;
+	margin-left: 10px;
+	border: 1px #d2dbc4 solid;
+	background-color: #eeeeee;
+	display: block;
+	position: relative;
+	padding-left: 8px;
+}
+
+.sotable-list .seq, 
+.sotable-list .repeat_cnt,
+.sotable-list .nth, 
+.sotable-list .delete,
+.sotable-list .popup,
+.sotable-list .file_img,
+.sotable-list .itemupdown{
+	/*position: absolute;*/
+	vertical-align: middle;
+}
+
+.sotable-list .seq, 
+.sotable-list .repeat_cnt,
+.sotable-list .nth, 
+.sotable-list .delete,
+.sotable-list .popup{
+	width: 32px;
+	height: 32px;
+	background-color: white;
+	border: 1px solid #d2dbc4;
+	display: inline-block;
+	font-size: 20px;
+	text-align: center;
+	line-height: 32px;
+}
+
+.sotable-list a.itemup,
+.sotable-list a.itemdown{
+	
+}
+
+.sotable-list .file_img {
+	width: 80px;
+	height: 50px;
+	/*
+	width: 52px;
+	height: 32px;
+	*/
+	margin-left: 10px;
+	margin-right: 10px;
+	display: inline-block;
+}
+
+.sotable-list select.repeat_cnt {
+	width: 48px;
+}
+
+.sotable-list .delete {
+	font-size: 0;
+	background: url("/img/prj/prj-icon_cancel_24x24.png") no-repeat;
+	background-color: white;
+	background-position: 50% 50%;
+}
+
+.sotable-list .subject_movie{
+	width: 305px;
+	font-size: 15px;
+	font-weight: bold;
+	display: inline-block;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap; 
+}
+
+/*
+.itemupdown {
+	height: 32px;
+}
+.itemupdown a.itemup,
+.itemupdown a.itemdown{
+	
+	line-height: 20px;
+	position: relative;
+	display: inline-block;
+	top: 0px;
+	left: 0px;
+	
+}
+*/
+/*운동처방 영상 목록*/
+
+
+
+
+/*검색 양식*/
+.board.search,
+.artn-search.prescript-search {text-align: center;}
+/*검색 양식*/
+
+
+
+/*조합 검색 양식*/
+#form_MovieSearch,
+#form_CombSearch,
+#asyncsearchform_MovieSearch,
+#asyncsearchform_CombSearch{
+	font-size: 12px;
+}
+
+#dialog_MovieSelector .infinite-list,
+#dialog_CombSelector .infinite-list {
+	font-size: 12pt;
+	padding-top: 5px;
+	border-top: 2px #6699CC solid;
+	border-bottom: 2px #6699CC solid;
+}
+#dialog_MovieSelector .infinite-list li,
+#dialog_CombSelector .infinite-list li{
+	border-bottom: 1px solid #ccc;
+}
+#dialog_MovieSelector .infinite-list .select, 
+#dialog_CombSelector .infinite-list .select {
+	float: right;
+	width: 80px;
+	margin-top: 0px;
+}
+#dialog_MovieSelector .infinite-list .select:after,
+#dialog_CombSelector .infinite-list .select:after {
+	clear: right;
+}
+/*조합 검색 양식*/
+
+
+.infinite-list ul{
+	overflow: scroll;
+}
+.infinite-list li{
+	
+	margin-left: 3px;
+	margin-bottom: 10px;
+} 
+
+.infinite-list li>span{
+	display: inline-block;
+	vertical-align: top;
+	margin-top: 7px;		
+	margin-left: 10px;
+	font-size: 15px;
+}
+
+
+/* 영상조합 리스트 변경 - 2013.05.14 by jhson */
+#infinitelist_MovieSearch,
+#infinitelist_CombSearch {
+	max-height: 500px;
+	overflow: auto;
+	font-size: 12px;
+}
+#infinitelist_MovieSearch li.selected,
+#infinitelist_CombSearch li.selected {
+	background-color: #60C1F2;
+}
+
+#list_StorePlaceMovie li,
+#list_StorePlaceComb li{
+	display: inline;		
+}
+
+#list_StorePlaceMovie li img,
+#list_StorePlaceComb li img{
+	/*margin-top: -6px;*/
+}
+
+#list_StorePlaceMovie li span,
+#list_StorePlaceComb li span{
+	vertical-align: top;
+	margin-top: 1px;
+	margin-left: 5px;
+	margin-right: 10px;
+}
+/*고급 검색 기능 */
+
+
+
+/*.prescript.show form h3, 
+.layout-contents .movie-edit h3, 
+.layout-contents .comb-edit h3, 
+.layout-contents .comb365plus-edit h3 {
+	background-image: url(image/bizbgpack/edit-field-header.png);
+	width: 788px;
+	height: 30px;
+	background-position: 0px 0px;
+	border-left: 1px solid #d1d1d1;
+	border-right: 1px solid #d1d1d1;
+	padding: 0px 0px 0px 10px;
+	
+	color: #fff;
+	letter-spacing: -2px;
+	line-height: 25px;
+}
+.prescript.show form h3{
+	margin-top: 5px;
+}
+
+.prescript.show .section{
+	margin-top: -4px;
+	margin-bottom: 20px;
+}*//*2013. 09. 26 jhlee 나중에 확인*/
+
+/*2013. 09. 13. 이정훈 시작*/
+/*
+.validator .board-edit textarea {
+	margin-top: 5px; width: 98%;
+}
+
+
+.board-edit tr td input[type='text'],
+.board-edit tr td select{	
+	margin-left: 2px;
+}
+
+.board-edit tr td .bar{
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
+.board-edit tr td .webnote_container{
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+*/
+/*2013. 09. 13. 이정훈 종료*/
+
+/* 문진표 131212 강성호*/
+.medi-question-top,
+.medi-question-bottom
+{
+	width: 100%; font-size: 10pt;
+}
+
+.medi-question-top,
+.medi-question-top th,
+.medi-question-top td,
+.medi-question-bottom,
+.medi-question-bottom th,
+.medi-question-bottom td
+{
+	border-collapse: collapse; border: 1px solid #ccc;
+	padding-left: 5px;
+}
+.medi-question-top tr,
+.medi-question-bottom tr
+{
+	height: 30px;
+}
+.medi-question-top th,
+.medi-question-bottom th
+{
+	text-align:left;
+	background-color: #eee;
+}
+.medi-question-top th.css-height,
+.medi-question-top th.css-weight
+{
+	width:90px;
+	text-align: left;
+}
+.medi-question-top th.css-feet_size
+{
+	width:125px;
+    text-align: left;
+}
+.medi-question-top td
+{
+	width:125px;
+}
+.medi-question-top input
+{
+	width: 100px;
+}
+.medi-question-top input[type='text']
+{
+	text-align: right;
+}
+.medi-question-bottom .check-radio
+{
+	text-align:center;
+	width: 80px;
+}
+.medi-question-bottom .survey-radio
+{
+	text-align: center;
+}
+.medi-question-bottom input[type=text]
+{
+	width: 84%;
+}
+.health-screening th
+{
+	width:150px;
+}
+.health-screening input[type='text']
+{
+	text-align: right;
+	width: 50px;
+}
+.health-screening .non-HDL
+{
+	font-size: 10px;
+}
+
+/* 처방전 추가 항목 레이아웃 설정부 - 2013.12.18 by jhson */
+#checkboxlist_painSiteCheck span{
+	display: inline-block;
+	width: 7em;
+}
+#checkboxlist_painSiteCheck span input,
+#checkboxlist_painSiteCheck span label{
+	vertical-align: middle;
+}
+
+.prescript div.slideUp
+{
+    display : none;
+}
+.prescript .slideToggle
+{
+	cursor: pointer;
+}
+.prescript .slideToggle span
+{
+    float: right;
+    margin-right: 1em;
+    color: white;
+    cursor: pointer;
+}
+.prescript .totalslideToggle
+{
+    float: right;
+    margin-right: 1em;
+}
+.prescript .totalslideToggle:hover
+{
+	text-decoration:none;
+}
+
+/* 개별영상 검색 - 2014.02.19 by shkang*/
+#search-movie-detail
+{
+    margin-bottom: 1em;
+}
+#search-movie-detail tr th
+{
+    width: 155px;
+}
+
+#search-movie-detail select
+{
+    width: 100%;
+}
+.artn-search span.movieComment
+{
+    font-family: "돋움",Dotum;
+    font-size: 12px;
+}
+.artn-search ul
+{
+    margin-top: 0.5em;
+}

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="artn.common">
+
+<!-- 구매 내역 -->
+<select id="payment-single" parameterType="map" resultType="map">
+    <![CDATA[
+        select *
+        from
+            artn_payment
+        where
+            (((#{id} is null) and true) or (id = #{id})) and
+            (((#{id_payment} is null) and true) or (id = #{id_payment})) and
+            (((#{id_user} is null) and true) or (id_user = #{id_user}))
+        ;
+    ]]>
+</select>
+
+<select id="payment-all" parameterType="map" resultType="map">   
+    <![CDATA[    	
+    select a.id, a.id_user, a.to_name ,b.subject, sum(product_count) product_count, a.amount, a.delivery_status,
+		date_format(b.date_start, '%Y년 %m월 %d일') as date_start_fmt,
+		date_format(b.date_end, '%Y년 %m월 %d일') as date_end_fmt,
+		date_format(b.date_confirm, '%Y년 %m월 %d일') as date_confirm_fmt,
+		b.transaction_num,
+		(select count(*) from
+			(
+				select a.*
+					from 
+				artn_payment a, artn_purchase b
+				where
+					1=1 and
+					a.id=b.id_payment and 
+		]]>
+			<if test="Guest">
+                b.pay_user_name = #{pay_user_name} and
+                b.pay_phone = #{pay_phone} and
+           </if>
+           <![CDATA[
+                (((#{id_user} is null) and true) or (b.id_user = #{id_user})) and
+                (((#{id_payment} is null) and true) or (b.id_payment = #{id_payment})) and
+                ( ((#{search_div} is null) or (#{search_text} = '')) or
+                  ((#{search_div} = '') and (#{search_text} != '')) or
+                  ((#{search_div} = 'pay_user_name') and (b.pay_user_name like concat('%', #{search_text}, '%')) ) or
+                  ((#{search_div} = 'id_user') and (b.id_user = #{search_text})) or
+                  ((#{search_div} = 'delivery_num') and (b.delivery_num = #{search_text})) or
+                  ((#{search_div} = 'id_payment') and (b.id_payment = #{search_text})) ) and
+           ]]>
+           <if test="inicancel != 'inicancel'">
+                (((#{status} is null) and true) or (b.status = #{status})) and
+           </if>
+           <![CDATA[    
+                (((#{date} is null) and true) or (b.date_start between #{date} and now()))
+				group by a.id
+				order by a.id desc
+			) abc) as row_count
+		from
+			artn_payment a, artn_purchase b
+			where
+				1=1 and
+			 	a.id=b.id_payment and
+			]]>
+			<if test="Guest">
+                b.pay_user_name = #{pay_user_name} and
+                b.pay_phone = #{pay_phone} and
+           </if>
+           <![CDATA[
+                (((#{id_user} is null) and true) or (b.id_user = #{id_user})) and
+                (((#{id_payment} is null) and true) or (b.id_payment = #{id_payment})) and
+                ( ((#{search_div} is null) or (#{search_text} = '')) or
+                  ((#{search_div} = '') and (#{search_text} != '')) or
+                  ((#{search_div} = 'pay_user_name') and (b.pay_user_name like concat('%', #{search_text}, '%')) ) or
+                  ((#{search_div} = 'id_user') and (b.id_user = #{search_text})) or
+                  ((#{search_div} = 'delivery_num') and (b.delivery_num = #{search_text})) or
+                  ((#{search_div} = 'id_payment') and (b.id_payment = #{search_text})) ) and
+           ]]>
+           <if test="inicancel != 'inicancel'">
+                (((#{status} is null) and true) or (b.status = #{status})) and
+           </if>
+	<![CDATA[
+	(((#{date} is null) and true) or (b.date_start between #{date} and now()))
+	group by a.id
+	order by a.id desc
+	limit
+         #{offset},#{rowlimit};
+    ]]>
+</select>
+
+<update id="payment-modify" parameterType="map">
+  <![CDATA[
+        replace into
+            artn_payment
+        values(
+            #{id},
+            #{id_user},
+            #{amount},
+            #{amount_adjust},
+            #{date_upload},
+            
+            #{date_confirm},
+            #{comment},
+            #{comment_admin},
+            #{delivery_num},
+            #{transaction_num},
+            
+            #{pay_type},
+            #{pay_type_name},
+			#{to_name},
+			#{to_phone_mobi},
+			#{to_phone_home},
+			
+			#{to_zipcode},
+			#{to_address},
+			#{pay_user_name},
+			#{pay_phone},
+			#{pay_mail},
+			
+			#{pay_bank_user},
+			#{pay_bank_name},
+			#{pay_bank_account},
+			#{delivery_status}
+            );
+    ]]>
+</update>
+
+<update id="payment-delete" parameterType="map">
+  <![CDATA[
+      update 
+        artn_payment
+      set
+        id = id * -1
+      where
+        id = #{id}
+      ;
+    ]]>
+</update>
+
+<update id="payment-update" parameterType="map">
+  <![CDATA[
+      update 
+        artn_payment
+      set
+        ]]>
+            <if test="status != '-2'">
+            delivery_num = #{delivery_num}
+            </if>
+            <if test="status == '-2'">
+            amount = amount - #{sum_price}
+            </if>
+        <![CDATA[
+      where
+        id = #{id_payment}
+      ;
+    ]]>
+</update>
+
+</mapper>

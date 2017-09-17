@@ -1,0 +1,134 @@
+/*
+외부 프로젝트용 커스텀 스타일
+author: jhson
+since: 2013.11.25
+*/
+
+/***************************************************************** Custom Icons [begin] *****************************************************************/
+.prj-icon-16, .prj-icon-32, .prj-icon-48, .prj-icon-64, .prj-icon-96, .prj-icon-128 { display: inline-block; background-repeat: no-repeat;}
+.prj-icon-16{ width: 16px; height: 16px; background-image: url("/img/prj/prj-icons_h16.png"); }
+.prj-icon-32{ width: 32px; height: 32px; background-image: url("/img/prj/prj-icons_h32.png");}
+.prj-icon-48{ width: 48px; height: 48px; background-image: url("/img/prj/prj-icons_h48.png"); }
+.prj-icon-64{ width: 64px; height: 64px; background-image: url("/img/prj/prj-icons_h64.png"); }
+.prj-icon-96{ width: 96px; height: 96px; background-image: url("/img/prj/prj-icons_h96.png"); }
+.prj-icon-128{ width: 128px; height: 128px; background-image: url("/img/prj/prj-icons_h128.png"); }
+
+.prj-icon-16.p1{ background-position: 0 0; }
+.prj-icon-16.p2{ background-position: -16px 0 ; }
+.prj-icon-16.p3{ background-position: -32px 0 ; }
+.prj-icon-16.p4{ background-position: -48px 0; }
+.prj-icon-16.p5{ background-position: -64px 0; }
+.prj-icon-16.p6{ background-position: -80px 0; }
+.prj-icon-16.p7{ background-position: -96px 0; }
+.prj-icon-16.p8{ background-position: -112px 0; }
+.prj-icon-16.p9{ background-position: -128px 0; }
+.prj-icon-16.p10{ background-position: -144px 0; }
+.prj-icon-16.p11{ background-position: -160px 0; }
+
+.prj-icon-32.p1{ background-position: 0 0; }
+.prj-icon-32.p2{ background-position: -32px 0 ; }
+.prj-icon-32.p3{ background-position: -64px 0; }
+.prj-icon-32.p4{ background-position: -96px 0; }
+.prj-icon-32.p5{ background-position: -128px 0; }
+.prj-icon-32.p6{ background-position: -160px 0; }
+.prj-icon-32.p7{ background-position: -192px 0; }
+.prj-icon-32.p8{ background-position: -224px 0; }
+.prj-icon-32.p9{ background-position: -256px 0; }
+.prj-icon-32.p10{ background-position: -288px 0; }
+.prj-icon-32.p11{ background-position: -320px 0; }
+
+.prj-icon-48.p1{ background-position: 0 0; }
+.prj-icon-48.p2{ background-position: -48px 0 ; }
+.prj-icon-48.p3{ background-position: -96px 0; }
+.prj-icon-48.p4{ background-position: -144px 0; }
+.prj-icon-48.p5{ background-position: -192px 0; }
+.prj-icon-48.p6{ background-position: -240px 0; }
+.prj-icon-48.p7{ background-position: -288px 0; }
+.prj-icon-48.p8{ background-position: -336px 0; }
+.prj-icon-48.p9{ background-position: -384px 0; }
+.prj-icon-48.p10{ background-position: -432px 0; }
+.prj-icon-48.p11{ background-position: -480px 0; }
+
+.prj-icon-64.p1{ background-position: 0 0; }
+.prj-icon-64.p2{ background-position: -64px 0 ; }
+.prj-icon-64.p3{ background-position: -128px 0; }
+.prj-icon-64.p4{ background-position: -192px 0; }
+.prj-icon-64.p5{ background-position: -256px 0; }
+.prj-icon-64.p6{ background-position: -320px 0; }
+.prj-icon-64.p7{ background-position: -384px 0; }
+.prj-icon-64.p8{ background-position: -448px 0; }
+.prj-icon-64.p9{ background-position: -512px 0; }
+.prj-icon-64.p10{ background-position: -576px 0; }
+.prj-icon-64.p11{ background-position: -640px 0; }
+
+.prj-icon-64.loc2-1{ background-position: 0 -64px; }
+.prj-icon-64.loc2-2{ background-position: -64px -64px; }
+.prj-icon-64.loc2-3{ background-position: -128px -64px; }
+.prj-icon-64.loc2-4{ background-position: -192px -64px; }
+.prj-icon-64.loc2-5{ background-position: -256px -64px; }
+.prj-icon-64.loc2-6{ background-position: -320px -64px; }
+.prj-icon-64.loc2-7{ background-position: -384px -64px; }
+.prj-icon-64.loc2-8{ background-position: -448px -64px; }
+.prj-icon-64.loc2-9{ background-position: -512px -64px; }
+.prj-icon-64.loc2-10{ background-position: -576px -64px; }
+.prj-icon-64.loc2-11{ background-position: -640px -64px; }
+.prj-icon-64.loc2-12{ background-position: -704px -64px; }
+.prj-icon-64.loc2-13{ background-position: -768px -64px; }
+.prj-icon-64.loc2-14{ background-position: -832px -64px; }
+.prj-icon-64.loc2-15{ background-position: -896px -64px; }
+.prj-icon-64.loc2-16{ background-position: -960px -64px; }
+  
+.prj-icon-96.p1{ background-position: 0 0; }
+.prj-icon-96.p2{ background-position: -96px 0 ; }
+.prj-icon-96.p3{ background-position: -192px 0; }
+.prj-icon-96.p4{ background-position: -288px 0; }
+.prj-icon-96.p5{ background-position: -384px 0; }
+.prj-icon-96.p6{ background-position: -480px 0; }
+.prj-icon-96.p7{ background-position: -576px 0; }
+.prj-icon-96.p8{ background-position: -672px 0; }
+.prj-icon-96.p9{ background-position: -768px 0; }
+.prj-icon-96.p10{ background-position: -864px 0; }
+.prj-icon-96.p11{ background-position: -960px 0; }
+
+.prj-icon-128.p1{ background-position: 0 0; }
+.prj-icon-128.p2{ background-position: -128px 0 ; }
+.prj-icon-128.p3{ background-position: -256px 0; }
+.prj-icon-128.p4{ background-position: -384px 0; }
+.prj-icon-128.p5{ background-position: -512px 0; }
+.prj-icon-128.p6{ background-position: -640px 0; }
+.prj-icon-128.p7{ background-position: -768px 0; }
+.prj-icon-128.p8{ background-position: -896px 0; }
+.prj-icon-128.p9{ background-position: -1024px 0; }
+.prj-icon-128.p10{ background-position: -1152px 0; }
+.prj-icon-128.p11{ background-position: -1280px 0; }
+
+/***************************************************************** Custom Icons [end] *****************************************************************/
+
+/* prj-icon_h64.png 내용 설명
+<<<<<<메인화면용
+MediFit, 스테레칭, 365+, 나의 맞춤운동
+<<<<<<메인메뉴용
+통증치료 및 예방운동, 테마별운동, 개인별 운동구성, 처방전(운동처방), 영상관리, 
+조합관리, 365PLUS 관리, 처방운동 리스트, 문진표, 건강검진, 
+물리치료, 통합집계, 회원관리, 통합이력
+*/
+
+
+.prj-bg-edge4-on { background: url("/img/prj/prj-bg_edge_20x20_33cccc.png") no-repeat 100% 0%; }
+
+
+/* 메인메뉴 추가/변경 - 2014.01.08 by jhson [시작] */
+
+.prj-menu-wrap { background: url("/img/prj/prj-bg_line_1x20_dddddd.png") repeat-x; margin-bottom: 1.5em; }
+.prj-menu-wrap > div { vertical-align: top;}
+.prj-menu-wrap h2 { color: #655; background-color: #dedede; font-size: 12px; width: 115px; height: 20px; position: relative; }
+.prj-menu-wrap h2 span { position: absolute; top: 50%; left: 0.5em; margin-top: -7px; }
+.prj-menu-wrap ul li { display: inline-block; vertical-align: top; float: left; margin: 1em 1em 0 0; }
+.prj-menu-wrap ul li a { display: block; width: 115px; height: 120px; text-align: center; background-color:#999999; }
+.prj-menu-wrap ul li a:hover { background-color:#33cccc; }
+.prj-menu-wrap .prj-icon-64 { display: inline-block; margin-top: 5px; }
+.prj-menu-wrap .prj-icon-name { display: inline-block; width: 85px; color: #fff; border-top: 1px solid #fff; padding-top: 0.5em; font-weight: bold; }
+.prj-menu-wrap.single > div { display: inline-block; width: auto; }
+
+/* prj-bg_line_1x20_dddddd.png */
+/* 메인메뉴 추가/변경 - 2014.01.08 by jhson [종료] */

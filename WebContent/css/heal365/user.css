@@ -1,0 +1,229 @@
+/*로그인 페이지 시작*/
+	.contents .login_form{
+		width: 414px;
+		margin: 0 auto;
+	}
+	.contents-base{ 
+		margin: 0 auto;		
+		
+		padding-top: 36px;
+		padding-bottom: 20px;
+		
+		border-top: 2px solid #42a04a;
+		border-left: 1px solid #e7e7e7;
+		border-right: 1px solid #e7e7e7;
+		border-bottom: 1px solid #e7e7e7;
+		background-color: #f9f9f9;
+		
+		width: 410px;
+	}
+
+	.login_form .contents-base .article{	
+		border-bottom: 1px solid #ccc;
+		padding-bottom: 20px;
+		margin: 0 auto;
+		width: 308px;			
+		overflow: hidden; 
+	}	
+	.contents-base .article ul{
+		margin-left: 0px;
+		margin-top: 2px;
+		margin-bottom: 0px;
+		width: 225px;
+		float: left;
+	}
+	.login_form .article ul li{
+		float: left;
+		margin-bottom: 6px;
+	}
+	.login_form .article ul li input{
+		width: 220px;
+		height: 17px;
+	}
+	
+	.login_form .contents-base .article input[type="submit"]{
+		cursor: pointer;
+		cursor: hand;		
+		width: 72px;
+		height: 52px;
+		margin-top: 3px;
+		margin-left: 9px;
+		text-align: center;
+		font-weight: bold;		
+		font-size: 15px;
+		color: white;	
+		
+		-moz-box-shadow:inset 0px 0px 3px #fff;
+	    -webkit-box-shadow:inset 0px 0px 3px #fff;
+	    box-shadow:inset 0px 0px 3px #fff;	    
+	    
+	    border: 1px solid #727272;
+	    background: #7d7d7d;
+	    background: -moz-linear-gradient(top, #7d7d7d 0%, #3a3a3a 100%);
+	    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#7d7d7d), color-stop(100%,#3a3a3a));
+	    background: -webkit-linear-gradient(top, #7d7d7d 0%,#3a3a3a 100%);
+	    background: -o-linear-gradient(top, #7d7d7d 0%,#3a3a3a 100%);
+	    background: -ms-linear-gradient(top, #7d7d7d 0%,#3a3a3a 100%);
+	    background: linear-gradient(to bottom, #7d7d7d 0%,#3a3a3a 100%);
+	}
+
+	.user-password .contents-base .article{
+		width: 285px;
+		margin: 0 auto;
+	}
+
+	.login_form .article input[type="submit"]+span{		
+		border-right: 1px solid #ccc;
+		margin-top: 2px;
+	}
+	
+	.login_form .article  span{
+		padding-right: 15px;
+		margin-right: 15px;
+		/*height: 20px;*/
+				
+		margin-top: 1px;
+		float: left;
+		margin-top: 5px;
+	}
+	
+	.login_form .article span input[type="checkbox"]{
+		position: relative;
+		top: 2px;
+	}
+	
+	.login_form .article span label,
+	.login_form .article span a{
+		color: #333333;
+		font-size: 13px;
+	}
+	
+	
+	.login_form .new_mem{
+		margin: 0 auto;
+		padding-top: 10px;
+		width: 280px;
+	}
+	
+	.login_form .new_mem .control{
+		margin-top: 10px;
+		margin-left: 30%;
+	}
+	
+	.login_form .new_mem p{
+		font-size: 11px;
+		letter-spacing: -1px;
+	}
+	.login_form .new_mem p span{
+		float: left;
+		margin-top: -2px;
+		margin-right: 5px;
+	}
+/*로그인 페이지 종료*/
+	
+	
+/*로그인 후 메뉴 페이지 시작*/
+/*새로운 메뉴 */
+	.section .article .nav div{
+		margin-left: 0px;			
+		background: url(images/bg-1_03.png) no-repeat 0 19px;
+	}
+	.section .article .nav div dl{
+		display: inline-table;
+		margin-right: -4px;
+		margin-bottom: 30px;		
+	}
+	
+	.section .article .nav dl dt{
+		/*background: url(images/bizbgpack/heal365-bg-edge/heal365-bg-edge4-on.png) no-repeat;*/
+		background-position: 96px 0px;
+		color: #ffffff;
+		font-size: 12px;
+		font-weight: bold;
+		padding-top: 3px;
+		padding-left: 5px;
+		display: block;
+		width: 110px;
+		height: 17px;
+		background-color: #dedede;
+		margin-bottom: 10px;
+		font-family: 'NanumGothicBold' sans-serif;
+	}
+	
+	.section .article .nav dl dd{
+		background-color:#999999;	
+		border: 1px solid #ccc;		
+		float: left;
+		margin-right: 15px;
+	}
+	
+	.section .article .nav dl dd a{
+		color: #ffffff;
+		display: inline-block;
+		width: 115px;
+		height: 120px;			
+		text-decoration: none;
+		font-weight: bold;
+		font-size: 12px;
+		text-align: center;
+	}
+	.section .article .nav dl dd a:hover{
+		background-color: #b0df52;
+		/*background-color: #33cccc;*/		
+	}
+	
+	.section .article .nav div dl dd a.button_Workout span{			
+		background-position: -565px -62px;		
+	}
+	
+	.section .article .nav div dl dd a.button_Workout span{			
+		background-position: -375px -62px;		
+	}	
+	
+	.section .article .nav div dl dd a span{
+		background: url(/img/contents/bizicon/heal365-bg-pack.png) no-repeat;
+		display: block;
+		width: 80px;
+		height: 74px;
+		margin-bottom: 10px;
+		border-bottom: 1px solid white;
+		margin-left: 17px;
+	}
+	
+	.section .article .nav div dl dd a.button_CureAndExcercise span{			
+		background-position: 7px -62px;		
+	}
+	.section .article .nav div dl dd a.button_Routine span{			
+		background-position: -183px -62px;		
+	}
+	
+	.section .article .nav div dl dd a.button_MyScription span{			
+		background-position: -1335px -62px;			
+	}
+	
+	.section .article .nav div dl dd a.button_movie span{			
+		background-position: -759px -62px;		
+	}
+	.section .article .nav div dl dd a.button_mix span{			
+		background-position: -950px -62px;		
+	}
+	.section .article .nav div dl dd a.button_365plus span{			
+		background-position: -1144px -62px;		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	.section .article .nav div:nth-child(3) dl dd{
+		float: left;
+		margin-right: 15px;
+	}
+	
+/*새로운 메뉴 */
+
+/*로그인 후 메뉴 페이지 종료*/	

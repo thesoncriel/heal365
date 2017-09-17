@@ -1,0 +1,959 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="artn.heal.database">
+
+<!-- 개별 영상 (Movie) -->
+		<select id="movie-all" parameterType="map" resultType="map">
+			<![CDATA[
+		
+select 
+	mfv.*,
+	mfvcnt.*
+from
+	heal_movie_file_view mfv,
+	(select count(*) as row_count
+	from
+		heal_movie_file_view
+	where
+	/*일련번호(ID)*/
+    ( ( ((#{id} is null) or (#{id} = '')) and (id > 0)) or ( id = #{id} ) ) and
+    /*영상코드*/
+    ( ((#{movie_code} is null) or (#{movie_code} = '')) or ( movie_code = #{movie_code} ) ) and
+    /*제목*/
+	( ((#{subject} is null) and (subject like '%')) or (subject like concat('%', #{subject},'%')) ) and 
+	/*카테고리*/
+	( ((#{cate_movie} is null) and (cate_movie like '%')) or (cate_movie like concat(#{cate_movie}, '%')) ) and
+	/*중증도(VAS)*/
+	( ( ((#{vas_high} is null) or (#{vas_high} = '')) and (vas_high >= 0)) or (vas_high = #{vas_high}) ) and
+	/*등록 날짜*/
+	( ( ((#{date_low} is null) or (#{date_low} = '')) and (date_upload > '2000-01-01')) or (date_upload between #{date_low} and #{date_high}) ) and
+	/*운동별 분류*/
+	( ( ((#{cate_sub_loc} is null) or (#{cate_sub_loc} = 0))  and true) or (cate_sub_loc & #{cate_sub_loc}) > 0 ) and
+	( ( ((#{cate_sub_tool} is null) or (#{cate_sub_tool} = 0))  and true) or (cate_sub_tool & #{cate_sub_tool}) > 0 ) and
+	( ( ((#{cate_sub_mode} is null) or (#{cate_sub_mode} = 0))  and true) or (cate_sub_mode & #{cate_sub_mode}) > 0 ) and
+	( ( ((#{cate_sub_part} is null) or (#{cate_sub_part} = 0))  and true) or (cate_sub_part & #{cate_sub_part}) > 0 ) and
+	( ( ((#{cate_sub_mecha} is null) or (#{cate_sub_mecha} = 0))  and true) or (cate_sub_mecha & #{cate_sub_mecha}) > 0 )
+	) mfvcnt
+where
+	/*일련번호(ID)*/
+	( ( ((#{id} is null) or (#{id} = '')) and (id > 0)) or ( id = #{id} ) ) and
+	/*영상코드*/
+    ( ((#{movie_code} is null) or (#{movie_code} = '')) or ( movie_code = #{movie_code} ) ) and
+	/*제목*/
+	( ((#{subject} is null) and (subject like '%')) or (subject like concat('%', #{subject},'%')) ) and 
+	/*카테고리*/
+	( ((#{cate_movie} is null) and (cate_movie like '%')) or (cate_movie like concat(#{cate_movie}, '%')) ) and
+	/*중증도(VAS)*/
+	( ( ((#{vas_high} is null) or (#{vas_high} = '')) and (vas_high >= 0)) or (vas_high = #{vas_high}) ) and
+	/*등록 날짜*/
+	( ( ((#{date_low} is null) or (#{date_low} = '')) and (date_upload > '2000-01-01')) or (date_upload between #{date_low} and #{date_high}) ) and
+	/*운동별 분류*/
+    ( ( ((#{cate_sub_loc} is null) or (#{cate_sub_loc} = 0))  and true) or (cate_sub_loc & #{cate_sub_loc}) > 0 ) and
+    ( ( ((#{cate_sub_tool} is null) or (#{cate_sub_tool} = 0))  and true) or (cate_sub_tool & #{cate_sub_tool}) > 0 ) and
+    ( ( ((#{cate_sub_mode} is null) or (#{cate_sub_mode} = 0))  and true) or (cate_sub_mode & #{cate_sub_mode}) > 0 ) and
+    ( ( ((#{cate_sub_part} is null) or (#{cate_sub_part} = 0))  and true) or (cate_sub_part & #{cate_sub_part}) > 0 ) and
+    ( ( ((#{cate_sub_mecha} is null) or (#{cate_sub_mecha} = 0))  and true) or (cate_sub_mecha & #{cate_sub_mecha}) > 0 )
+order by
+	date_upload desc, id asc
+
+limit #{offset}, #{rowlimit}
+;
+		]]>
+		</select>
+		<select id="movie-single" parameterType="map" resultType="map">
+<![CDATA[
+select *
+from
+	heal_movie_file_view
+where
+	id = #{id}
+;
+]]>
+		</select>
+		<select id="movie-all-ajax" parameterType="map" resultType="map">
+		<![CDATA[
+select 
+	mfv.id as id,
+	mfv.subject as subject,
+	mfv.subject as subject_movie,
+	mfv.id as id_movie,
+	mfv.file_img as file_img,
+	1 as repeat_cnt,
+	1 as nth,
+	'' as left_right,
+	'' as popup,
+	'' as popup_msg,
+	'' as popup_action
+from
+	heal_movie_file_view mfv
+where
+	/*일련번호(ID)*/
+	( ( ((#{id} is null) or (#{id} = '')) and (id > 0)) or ( id = #{id} ) ) and
+	/*제목*/
+	( ((#{subject} is null) and (subject like '%')) or (  (subject like concat('%', #{subject}, '%'))) ) and 
+	/*카테고리*/
+	( ((#{cate_movie} is null) and (cate_movie like '%')) or (cate_movie like concat(#{cate_movie}, '%')) ) and
+	/*중증도(VAS)*/
+	( ( ((#{vas_high} is null) or (#{vas_high} = '')) and (vas_high >= 0)) or (vas_high = #{vas_high}) ) and
+	/*등록 날짜*/
+	( ( ((#{date_low} is null) or (#{date_low} = '')) and (date_upload > '2000-01-01')) or (date_upload between #{date_low} and #{date_high}) )
+order by
+	date_upload desc, id asc
+
+limit #{offset}, #{rowlimit}
+;
+		]]>
+		</select>
+		<insert id="movie-modify" parameterType="map">
+		<![CDATA[
+replace into 
+	heal_movie_file 
+	(id, movie_code,
+	subject, 
+	file_webm, file_mp4, file_ogg, file_mp3, file_img, file_smi, 
+	ori_webm, ori_mp4, ori_ogg, ori_mp3, ori_img, ori_smi, 
+	cate_movie, cate_sub_loc, cate_sub_tool, cate_sub_mode, cate_sub_part, cate_sub_mecha, 
+	vas_low, vas_high, date_upload,
+	file_mp4narr, ori_mp4narr
+	)
+values(
+	#{id}, #{movie_code},
+	#{subject}, 
+	#{file_webm}, #{file_mp4}, #{file_ogg}, #{file_mp3}, #{file_img}, #{file_smi}, 
+	#{ori_webm}, #{ori_mp4}, #{ori_ogg}, #{ori_mp3}, #{ori_img}, #{ori_smi}, 
+	#{cate_movie}, #{cate_sub_loc}, #{cate_sub_tool}, #{cate_sub_mode}, #{cate_sub_part}, #{cate_sub_mecha}, 
+	#{vas_low}, #{vas_high}, now(),
+	#{file_mp4narr}, #{ori_mp4narr}
+	)
+;
+		]]>
+		</insert>
+
+
+
+
+
+
+
+
+
+
+		
+		<!-- 조합 영상 (Combination) -->
+		<select id="comb-all" parameterType="map" resultType="map">
+		<![CDATA[
+select 
+	cv.*,
+	cvcnt.*
+from
+	heal_comb_view cv,
+	(select count(*) as row_count
+	from
+		heal_comb_view
+	where
+		/*제목*/
+		( ((#{subject} is null) and (subject like '%')) or (subject like concat('%', #{subject}, '%')) ) and 
+		/*카테고리*/
+		( ((#{cate_movie} is null) and (cate_movie like '%')) or (cate_movie like concat(#{cate_movie}, '%')) ) and
+		/*중증도(VAS)*/
+		( ( ((#{vas_high} is null) or (#{vas_high} = '')) and (vas_high >= 0)) or (vas_high = #{vas_high}) ) and
+		/*등록 날짜*/
+		( ( ((#{date_low} is null) or (#{date_low} = '')) and (date_upload > '2000-01-01')) or (date_upload between #{date_low} and #{date_high}) ) and
+		/*등록자*/
+		( ((#{name_uploader} is null) and (name_uploader like '%' or (name_uploader is null) )) or (name_uploader like concat('%', #{name_uploader}, '%')) ) and
+		/*사용그룹*/
+		( ((#{id_group} is null) and (id_group >= 0 )) or (id_group = #{id_group}) )
+	) cvcnt
+where
+	/*제목*/
+	( ((#{subject} is null) and (subject like '%')) or (subject like concat('%', #{subject}, '%')) ) and 
+	/*카테고리*/
+	( ((#{cate_movie} is null) and (cate_movie like '%')) or (cate_movie like concat(#{cate_movie}, '%')) ) and
+	/*중증도(VAS)*/
+	( ( ((#{vas_high} is null) or (#{vas_high} = '')) and (vas_high >= 0)) or (vas_high = #{vas_high}) ) and
+	/*등록 날짜*/
+	( ( ((#{date_low} is null) or (#{date_low} = '')) and (date_upload > '2000-01-01')) or (date_upload between #{date_low} and #{date_high}) ) and
+	/*등록자*/
+	( ((#{name_uploader} is null) and (name_uploader like '%' or (name_uploader is null) )) or (name_uploader like concat('%', #{name_uploader}, '%')) ) and
+	/*사용그룹*/
+	( ((#{id_group} is null) and (id_group >= 0 )) or (id_group = #{id_group}) )
+order by
+	date_upload desc, id asc
+
+limit #{offset}, #{rowlimit}
+;
+		]]>
+		</select>
+		<select id="comb-single" parameterType="map" resultType="map">
+		<![CDATA[
+select *
+from
+	heal_comb_view_detail
+where
+	id = #{id}
+;
+		]]>
+		</select>
+        <select id="comb-single-sub" parameterType="map" resultType="map">
+        <![CDATA[
+select *
+from
+    heal_comb_view_detail_sub
+where
+    id_comb = #{id}
+;
+        ]]>
+        </select>
+        <select id="comb-single-search" parameterType="map" resultType="map">
+        <![CDATA[
+select *
+from
+    heal_comb_view_detail
+where
+    ( (#{vas_high} < 3 ) and ((vas_high < 3) and (cate_movie like 'SF%')) ) or
+    ( ((#{cate_movie} is null) and (cate_movie like '%')) or (cate_movie like concat( substring(#{cate_movie}, 1, 9), '%')) ) and
+    ( ( (1 <= #{vas_high}) and (#{vas_high} < 3 ) and (vas_high = 2 ) ) or
+      ( (3 <= #{vas_high}) and (#{vas_high} < 6 ) and (vas_high = 5 ) ) or
+      ( (6 <= #{vas_high}) and (#{vas_high} <= 10) and (vas_high = 10) ) ) 
+;
+        ]]>
+        </select>
+		<select id="comb-all-ajax" parameterType="map" resultType="map">
+		<![CDATA[
+select 
+	cv.id as id,
+	cv.subject as subject,
+	cv.file_img as file_img,
+	cv.subject_movie as subject_movie,
+	cv.id_movie as id_movie,
+	cv.repeat_cnt as repeat_cnt
+from
+	heal_comb_view_detail cv
+where
+	/*제목*/
+	( ((#{subject} is null) and (subject like '%')) or (  (subject like concat('%', #{subject}, '%'))) ) and 
+	/*카테고리*/
+	( ((#{cate_movie} is null) and (cate_movie like '%')) or (cate_movie like concat(#{cate_movie}, '%')) ) and
+	/*중증도(VAS)*/
+	( ( ((#{vas_high} is null) or (#{vas_high} = '')) and (vas_high >= 0)) or (vas_high = #{vas_high}) ) and
+	/*등록 날짜*/
+	( ( ((#{date_low} is null) or (#{date_low} = '')) and (date_upload > '2000-01-01')) or (date_upload between #{date_low} and #{date_high}) ) and
+	/*등록자*/
+	( ((#{name_uploader} is null) and (name_uploader like '%' or (name_uploader is null) )) or (name_uploader like concat('%', #{name_uploader}, '%')) )
+order by
+	date_upload desc, id asc
+
+limit #{offset}, #{rowlimit}
+;
+		]]>
+		</select>
+		<insert id="comb-modify" parameterType="map">
+		<![CDATA[
+replace into 
+	heal_comb_header
+	(id,
+	subject, id_user, id_group, date_upload,
+	cate_movie, cate_sub, cate_menu, vas_low, vas_high
+	)
+values(
+	#{id},
+	#{subject}, #{id_user_creator}, #{id_group}, now(),
+	#{cate_movie}, #{cate_sub}, #{cate_menu}, #{vas_low}, #{vas_high}
+	)
+;
+
+]]>
+</insert>
+<delete id="comb-delete-cont" parameterType="map">
+	<![CDATA[
+delete from 
+	heal_comb_cont
+where
+	id_comb = #{id}
+;
+		]]>
+		</delete>
+		<insert id="comb-modify-cont" parameterType="map">
+		<![CDATA[
+replace into 
+	heal_comb_cont
+	(
+	id_comb, seq, id_movie, repeat_cnt
+	)
+values(
+	#{id}, #{seq}, #{id_movie}, #{repeat_cnt}
+	)
+;
+		]]>
+		</insert>
+        <insert id="comb-modify-cont-365plus" parameterType="map">
+        <![CDATA[
+replace into 
+    heal_comb_cont
+    (
+    id_comb, seq, id_movie, repeat_cnt,
+    nth, left_right, popup, popup_msg, popup_action
+    )
+values(
+    #{id}, #{seq}, #{id_movie}, #{repeat_cnt},
+    #{nth}, #{left_right}, #{popup}, #{popup_msg}, #{popup_action}
+    )
+;
+        ]]>
+        </insert>
+
+
+
+
+
+
+
+
+
+
+<!-- 처방전 내용 -->
+		<select id="prescript-all" parameterType="map" resultType="map">
+		<![CDATA[
+select 
+	cv.*,
+	cnt.*
+from
+	heal_prescript_view cv,
+	(select count(*) as row_count
+	from
+		heal_prescript_view
+	where
+		( 	( ((#{search_div} is null) or (#{search_div} = '') or (#{search_text} = '')) and true ) or
+			( (#{search_div} = 'diagnosis') and (diagnosis like concat('%', #{search_text}, '%')) ) or
+			( (#{search_div} = 'therap_name') and (therap_name like concat('%', #{search_text}, '%')) ) or
+  			( (#{search_div} = 'user_name') and (user_name like concat('%', #{search_text}, '%')) )	) and	
+  				
+		/*사용자ID*/
+		( ((#{id_user} is null) and (id_user like '%')) or (id_user = #{id_user}) ) and
+		/*사용자 이름*/
+		( ( (#{user_name} is null) and (user_name like '%')) or (user_name = #{user_name}) ) and
+		/*관련 의료 기관*/
+        ( ((#{id_medi} is null) and (id_medi >= 0)) or (id_medi = #{id_medi}) ) and
+        /*진단일 검색 가능*/
+        ( ( ((#{date_upload} is null) or (#{date_upload} = '')) and true) or (date(date_upload) = #{date_upload}) ) and
+        
+        /*의료 관계자 전용*/
+		( ( ( (#{is_admin} is not null) or (#{is_admin} <> '') ) and (status >= 0) ) or (status = 100) ) and
+		id > 0
+		) cnt
+where
+		( 	( ((#{search_div} is null) or (#{search_div} = '') or (#{search_text} = '')) and true ) or
+			( (#{search_div} = 'diagnosis') and (diagnosis like concat('%', #{search_text}, '%')) ) or
+			( (#{search_div} = 'therap_name') and (therap_name like concat('%', #{search_text}, '%')) ) or
+  			( (#{search_div} = 'user_name') and (user_name like concat('%', #{search_text}, '%')) )	) and	
+  				
+		/*사용자ID*/
+		( ((#{id_user} is null) and (id_user like '%')) or (id_user = #{id_user}) ) and
+		/*사용자 이름*/
+		( ( (#{user_name} is null) and (user_name like '%')) or (user_name = #{user_name}) ) and
+		/*관련 의료 기관*/
+        ( ((#{id_medi} is null) and (id_medi >= 0)) or (id_medi = #{id_medi}) ) and
+        /*진단일 검색 가능*/
+        ( ( ((#{date_upload} is null) or (#{date_upload} = '')) and true) or (date(date_upload) = #{date_upload}) ) and
+        
+        /*의료 관계자 전용*/
+		( ( ( (#{is_admin} is not null) or (#{is_admin} <> '') ) and (status >= 0) ) or (status = 100) ) and
+		id > 0
+        
+        
+
+limit #{offset}, #{rowlimit}
+;
+		]]>
+		</select>
+		<select id="prescript-single" parameterType="map" resultType="map">
+		<![CDATA[
+select *
+from
+	heal_prescript_view_detail
+where
+	id = #{id}
+limit 0, 1
+;
+		]]>
+		</select>
+		<select id="prescript-single-sub" parameterType="map" resultType="map">
+        <![CDATA[
+select *
+from
+    heal_prescript_view_detail_sub
+where
+    id_pres = #{id}
+;
+        ]]>
+        </select>
+        <insert id="prescript-create" parameterType="map">
+        <![CDATA[
+insert into 
+    heal_prescript_header
+    (
+    id_doctor, id_therap,
+    date_upload, date_end, remark, comment
+    )
+values(
+    #{id_doctor}, #{id_therap},
+    now(), now(), '', ''
+    )
+;
+        ]]>
+        </insert>
+		<insert id="prescript-modify" parameterType="map">
+		<![CDATA[
+replace into 
+	heal_prescript_header
+values(
+	#{id},
+	#{id_medi},
+    #{id_user}, 
+    #{id_doctor}, 
+    #{id_therap},
+    
+    #{id_medi_check},
+    #{id_medi_question},
+    #{id_physics},
+    #{date_upload}, 
+    #{date_end},
+    
+    #{diagnosis},
+    #{height}, 
+    #{weight},
+    #{bmi}, 
+    #{pain_site_check},
+	
+	#{pain_dir},
+	#{pain_type},
+	#{pain_since},
+    #{family_history},
+    #{curr_sick},
+    
+    #{remark},
+    #{after_action},
+    #{comment},
+    #{continued},
+    #{status}
+	)
+;
+		]]>
+		</insert>
+	    <insert id="prescript-modify-sub" parameterType="map">
+        <![CDATA[
+replace into 
+    heal_prescript_comb
+    (
+    seq,
+    id_pres, 
+    id_comb,
+    odi, str, rom,
+    weekly_chk,
+    frequency, intensity, duration, form
+    )
+values(
+    #{pres_comb_seq},
+    case when #{id_pres} is null then last_insert_id() else #{id_pres} end, 
+    #{id_comb},
+    #{odi}, #{str}, #{rom},
+    #{weekly_chk},
+    #{frequency}, #{intensity}, #{duration}, #{form}
+    )
+;
+        ]]>
+        </insert>
+	    
+<update id="prescript-delete" parameterType="map">
+        <![CDATA[
+update 
+    heal_prescript_header    
+set
+    id = #{id}*(-1)    
+    where id=#{id}
+;
+        ]]>
+</update>
+
+<!-- 신체 측정 기록 -->
+<select id="group-survey-single" parameterType="map" resultType="map">
+    <![CDATA[
+        select *
+        from
+            artn_group_survey
+        where
+            (((#{id} is null) and true) or (id = #{id})) and
+            (((#{id_user} is null) and true) or (id_user = #{id_user})) and
+            (((#{id_group} is null) and true) or (id_group = #{id_group}))
+        order by
+            date_upload desc
+        LIMIT 
+            #{limit}
+        ;
+    ]]>
+</select>
+
+<select id="group-survey-all" parameterType="map" resultType="map">
+    <![CDATA[
+        select *,
+            date_format(date_upload, '%Y년 %m월 %d일') as date_upload_fmt,
+            (
+                select count(*)
+                from
+                    artn_group_survey
+                where
+                    (((#{id} is null) and true) or (id = #{id})) and
+                    (((#{id_user} is null) and true) or (id_user = #{id_user})) and
+                    (((#{id_group} is null) and true) or (id_group = #{id_group}))
+            ) as row_count
+        from
+            artn_group_survey
+        where
+            (((#{id} is null) and true) or (id = #{id})) and
+            (((#{id_user} is null) and true) or (id_user = #{id_user})) and
+            (((#{id_group} is null) and true) or (id_group = #{id_group}))
+        order by
+            id desc
+        limit
+            #{offset}, #{rowlimit}
+        ;
+    ]]>
+</select>
+
+<update id="group-survey-modify" parameterType="map">
+    <![CDATA[
+        replace into
+            artn_group_survey
+        values(
+            #{id},
+			#{id_user},
+			#{id_group},
+			now(),
+			#{height},
+			
+			#{weight},
+			#{feet_size},
+			#{check},
+			#{text1},
+			#{text2}
+        );
+    ]]>
+</update>
+	
+<!-- 문진표 -->
+<select id="medi-question-single" parameterType="map" resultType="map">
+    <![CDATA[
+        select *,
+            date_format(date_upload, '%Y년 %m월 %d일') as date_upload_fmt
+        from
+            heal_medi_question
+        where
+            (((#{id_medi_question} is null) and true) or (id_medi_question = #{id_medi_question})) and
+            (((#{id_user} is null) and true) or (id_user = #{id_user})) and
+            (((#{id_writer} is null) and true) or (id_writer = #{id_writer})) and
+            (((#{id_medi} is null) and true) or (id_medi = #{id_medi}))
+        order by
+            date_upload desc
+        limit 1
+        ;
+    ]]>
+</select>
+
+<select id="medi-question-all" parameterType="map" resultType="map">
+    <![CDATA[
+        select *,
+            date_format(date_upload, '%Y년 %m월 %d일') as date_upload_fmt,
+            (
+                select count(*)
+                from
+                    heal_medi_question
+                where
+                    (((#{id_medi_question} is null) and true) or (id_medi_question = #{id_medi_question})) and
+                    (((#{id_user} is null) and true) or (id_user = #{id_user})) and
+                    (((#{id_writer} is null) and true) or (id_writer = #{id_writer})) and
+                    (((#{id_medi} is null) and true) or (id_medi = #{id_medi})) and
+                    /*날짜*/
+			        ( ( ((#{date_upload} is null) or (#{date_upload} = '')) and true) or (date(date_upload) = #{date_upload}) ) and
+                    /*검색날짜*/
+                    ( ( ((#{date_stats_start} is null) or (#{date_stats_start} = '')) and true) or (date(date_upload) <= #{date_stats_end} and date(date_upload) >= #{date_stats_start}) ) and
+			        /* 검색 */
+			        ( ( ((#{search_div} is null) or (#{search_div} = '') or (#{search_text} = '')) and true ) or
+			          ( (#{search_div} = 'writer_name') and (writer_name like concat('%', #{search_text}, '%')) ) or
+			          ( (#{search_div} = 'user_name') and (user_name like concat('%', #{search_text}, '%')) ) )
+            ) as row_count
+        from
+            heal_medi_question
+        where
+            (((#{id_medi_question} is null) and true) or (id_medi_question = #{id_medi_question})) and
+            (((#{id_user} is null) and true) or (id_user = #{id_user})) and
+            (((#{id_writer} is null) and true) or (id_writer = #{id_writer})) and
+            (((#{id_medi} is null) and true) or (id_medi = #{id_medi})) and
+            /*날짜*/
+	        ( ( ((#{date_upload} is null) or (#{date_upload} = '')) and true) or (date(date_upload) = #{date_upload}) ) and
+	        /*검색날짜*/
+            ( ( ((#{date_stats_start} is null) or (#{date_stats_start} = '')) and true) or (date(date_upload) <= #{date_stats_end} and date(date_upload) >= #{date_stats_start}) ) and
+	        /* 검색 */
+	        ( ( ((#{search_div} is null) or (#{search_div} = '') or (#{search_text} = '')) and true ) or
+	          ( (#{search_div} = 'writer_name') and (writer_name like concat('%', #{search_text}, '%')) ) or
+	          ( (#{search_div} = 'user_name') and (user_name like concat('%', #{search_text}, '%')) ) )
+        order by
+            id_medi_question desc
+        limit
+            #{offset}, #{rowlimit}
+        ;
+    ]]>
+</select>
+
+<update id="medi-question-modify" parameterType="map">
+    <![CDATA[
+        replace into
+            heal_medi_question
+        values(
+            #{id_medi_question},
+            #{id_user},
+            #{user_name},
+			#{id_writer},
+			#{writer_name},
+			
+			#{id_medi},
+			#{medi_name},
+            now(),
+            #{height},
+            #{weight},
+            
+            #{feet_size},
+            #{check},
+            #{text1},
+            #{text2}
+        );
+    ]]>
+</update>	
+<update id="medi-check-update" parameterType="map">
+    <![CDATA[
+    update
+        heal_medi_check
+    set
+        id_prescript = #{id}
+    where
+        id_medi_check = #{id_medi_check}
+    ;
+    ]]>
+</update>
+<!-- 통합 이력관리 - 2014.01.14 by shkang [시작] -->
+<select id="medi-stats-personal-all" parameterType="map" resultType="map">
+    <![CDATA[
+        select gusr.*,
+            date_format(gusr.date_join, '%Y-%m-%d') as date_join_fmt,
+            (select count(*)
+			    from heal_medi_check_complete
+			    where id_user = gusr.id_user) as check_count,
+		    (select count(*)
+		        from heal_medi_question
+		        where id_user = gusr.id_user) as question_count,
+		    (select count(*)
+		        from heal_medi_physics_complete
+		        where id_user = gusr.id_user) as physics_count,
+		    (select count(*)
+		        from heal_prescript_header
+		        where id_user = gusr.id_user and pain_site_check > 0 and id > 0) as prescript_count,
+		    (select count(*)
+		        from artn_group_user_view
+		        where
+		        /* 그룹 */
+	            ( ((#{id_group} is null) and true) or (id_group = #{id_group}) ) and
+	            /*특정 권한*/
+	            ( ((#{auth_group} is null) and true) or ( (auth_group & #{auth_group}) > 0 ) ) and
+	            /*사용자명*/
+	            ( ((#{user_name} is null) and true) or (user_name like concat('%', #{user_name}, '%') ) ) and
+	            /*날짜*/
+                ( ( ((#{date_upload} is null) or (#{date_upload} = '')) and true) or (date(date_join) = #{date_upload}) ) and
+	            /*검색*/
+	            ( ( ((#{search_div} is null) or (#{search_text} = '')) and true ) or
+	            ( (#{search_div} = 'user_name') and (gusr.user_name like concat('%', #{search_text}, '%') ) ) ) and
+	            
+	            id > 0
+	         ) as row_count
+		from
+		    artn_group_user_view gusr
+		where
+		    /* 그룹 */
+		    ( ((#{id_group} is null) and true) or (gusr.id_group = #{id_group}) ) and
+		    /*특정 권한*/
+            ( ((#{auth_group} is null) and true) or ( (gusr.auth_group & #{auth_group}) > 0 ) ) and
+            /*사용자명*/
+            ( ((#{user_name} is null) and true) or (gusr.user_name like concat('%', #{user_name}, '%') ) ) and
+            /*날짜*/
+            ( ( ((#{date_upload} is null) or (#{date_upload} = '')) and true) or (date(date_join) = #{date_upload}) ) and
+            /*검색*/
+            ( ( ((#{search_div} is null) or (#{search_text} = '')) and true ) or
+            ( (#{search_div} = 'user_name') and (gusr.user_name like concat('%', #{search_text}, '%') ) ) ) and
+            gusr.id > 0
+        order by
+            gusr.date_join desc
+		limit
+            #{offset}, #{rowlimit}
+        ;
+    ]]>
+</select>
+<!-- 통합 이력관리 - 2014.01.14 by shkang [종료] -->
+<!-- 테스트용 -->	
+  <select id="test-single" parameterType="map" resultType="map">
+  	<![CDATA[
+select *
+from 
+	test
+where
+	id = #{id}
+	]]>
+  </select>
+  <select id="test-all" parameterType="map" resultType="map">
+  	<![CDATA[
+select *,
+	(select count(*) from test
+	where
+		( ((#{id} is null) and (id >= 0)) or (id = #{id}) ) and
+		( ((#{name} is null) and (name like '%')) or (name like concat('%', #{name}, '%') ) )
+	) as row_count
+from 
+	test
+where
+	( ((#{id} is null) and (id >= 0)) or (id = #{id}) ) and
+	( ((#{name} is null) and (name like '%')) or (name like concat('%', #{name}, '%') ) )
+limit 
+	#{offset}, #{rowlimit}
+	]]>
+  </select>
+  <update id="test-modify" parameterType="map">
+  	<![CDATA[
+replace into test (id, name)
+values (
+	#{id},
+	#{name}
+	)
+	]]>
+  </update>
+  
+  
+  
+  
+  
+  
+  
+  
+
+
+
+
+
+  
+
+         
+  
+  
+  <!-- 통합 서비스 게시판 -->
+  <select id="service-single" parameterType="map" resultType="map">
+    <![CDATA[
+        select *
+        from 
+            heal_service
+        where
+            id = #{id};
+    ]]>
+  </select>
+  <select id="service-all" parameterType="map" resultType="map">
+  <![CDATA[
+        select id, group_name, name, phone, email, url, service_type, subject, content, date_format(date_upload, '%Y-%m-%d') date_upload,
+        (select count(*) from heal_service
+            where
+                ( ((#{service_type} is null) and (service_type = 'A')) or (service_type = #{service_type}) ) and
+                ( ((#{subject} is null) and (subject like '%')) or (subject like concat('%', #{subject}, '%') ) )
+            ) as row_count
+        from heal_service
+        where 
+        ( ((#{service_type} is null) and (service_type = 'A')) or (service_type = #{service_type}) ) and
+        ( ((#{subject} is null) and (subject like '%')) or (subject like concat('%', #{subject}, '%') ) )
+        order by
+            date_upload desc, id desc
+        limit 
+            #{offset}, #{rowlimit};
+    ]]>
+  </select>
+  <update id="service-modify" parameterType="map">
+  <![CDATA[
+      replace into 
+        heal_service(
+            id, group_name, name, phone, email, url, service_type, subject, content, date_upload
+            ) 
+        values(
+            #{id}, #{group_name}, #{name}, #{phone}, #{email}, #{url}, #{service_type}, #{subject}, #{content}, now()
+        );
+    ]]>
+  </update>
+  
+  
+  <!-- 조합 조회수 -->
+  <update id="comb-view-cnt" parameterType="map">
+   <![CDATA[
+  		update 
+    heal_comb_header    
+		set use_cnt = use_cnt+1    
+    where id=#{id}
+;
+   ]]>	
+  </update>
+ 
+ <!-- ITEM 추가 DB 2013.12.17 by BrunoSong 시 -->
+  
+  <select id="item-type-all" parameterType="map" resultType="map">
+    <![CDATA[
+        select *
+        from 
+            item_type
+        ;        
+    ]]>
+  </select>
+  <select id="item-type-single" parameterType="map" resultType="map">
+    <![CDATA[
+        select *
+        from 
+            item_type
+        where
+        	id_type = #{id_type}
+        ;
+    ]]>
+  </select>
+  
+ 
+  <update id="item-type-modify" parameterType="map">
+		<![CDATA[
+		replace into 
+			item_type		
+		values(
+			#{id_type},
+			#{item_name},
+			#{item_type},
+			#{item_option_select},
+			#{item_unit},
+			#{item_use_yn}
+			)
+		;
+		]]>
+	</update>
+	
+	<select id="item-select-single" parameterType="map" resultType="map">
+    <![CDATA[
+        select *
+        from 
+            item_select
+        where
+            id_group = #{id_group};
+    ]]>
+  </select>
+  
+  <select id="item-select-all" parameterType="map" resultType="map">
+    <![CDATA[
+        select *
+        from 
+            item_select
+        ;
+    ]]>
+  </select>
+  
+ 
+  <update id="item-select-modify" parameterType="map">
+		<![CDATA[
+		replace into 
+			item_select		
+		values(
+			#{id_select},
+			#{id_group},
+			#{group_name},
+			#{id_type}
+			)
+		;
+		]]>
+	</update>
+
+
+	<select id="item-detail-single" parameterType="map" resultType="map">
+	    <![CDATA[
+	        select *
+	        from 
+	            item_detail
+	        where
+                id_detail = #{id_detail}
+			;
+	    ]]>
+	</select>	
+		
+	<select id="item-detail-all" parameterType="map" resultType="map">
+	    <![CDATA[
+	        select itemd.*,items.*,itemds.*,itemds.id_type as id_select_type from 
+			    item_detail itemd
+			    left join item_type items
+			    on itemd.id_type = items.id_type
+				left join item_select itemds
+				on itemd.id_select = itemds.id_select				
+			;
+	    ]]>
+	</select>
+	  
+	 
+	<update id="item-detail-modify" parameterType="map">
+			<![CDATA[
+			replace into 
+				item_detail
+			values(
+				#{id_detail},
+				#{id_select},
+				#{id_type},
+				#{item_value},
+				now(),
+				now(),
+				#{first_writer},
+				#{last_writer},
+				#{id_writer},
+				#{user_name},
+				#{id_user}
+				)
+			;
+			]]>
+	</update>
+	
+	<!-- 2013.12.30 BrunoSong [시작] -->
+	<select id="approval-process-all" parameterType="map" resultType="map">
+	    <![CDATA[
+	        select * from 
+	        	heal_approval_process
+	        	where 
+	        	 id_task = #{id_task}
+			;
+	    ]]>
+	</select>
+	  
+	 
+	<update id="approval-process-modify" parameterType="map">
+			<![CDATA[
+			replace into 
+				heal_approval_process
+			values(
+				#{id_approval_process},
+				#{id_task},
+				#{id_previewer},
+				#{id_approver},
+				#{previewer_name},
+				#{approver_name},
+				#{date_preview},
+				#{date_approve},
+				#{task_type},
+				#{comment_previewer},
+				#{comment_approver}
+				)
+			;
+			]]>
+	</update>
+	
+	<!-- 2013.12.30 BrunoSong [종료] -->
+  </mapper>

@@ -1,0 +1,170 @@
+<%@ tag body-content="scriptless" pageEncoding="UTF-8" description="공통으로 쓰이는 html 바탕 구조" trimDirectiveWhitespaces="true" %>
+<%@ attribute name="title" %>
+<%@ attribute name="contents" %>
+<%@ taglib prefix="s" uri="/struts-tags" %>
+<%!
+	public String getBrowser(String header) {
+		if ( header.indexOf("MSIE") >= 0) {
+	         return "MSIE";
+	    } else if ( header.indexOf("Chrome") > -1) {
+	         return "Chrome";
+	    } else if ( header.indexOf("Opera") > -1) {
+	         return "Opera";
+	    } else if ( header.indexOf("Safari") > -1) {
+	     	return "Safari";
+	    }
+	    
+		return "Firefox";
+	}
+
+	public int getMenuNumber(String subValue){
+	    try{
+	    	String sValue = subValue.split("_")[0];
+	        return Integer.parseInt( sValue.replace("sub","") );
+	    }
+	    catch(Exception ex){
+	        return 0;
+	    }
+	}
+%>
+<%
+request.setAttribute("menu", getMenuNumber(contents));
+session.setAttribute("ip", request.getLocalAddr());
+session.setAttribute("browser", getBrowser(request.getHeader("User-Agent")));
+%>
+<!DOCTYPE html>
+<html>
+    <head> 
+        <meta charset="utf-8" />
+        
+        <title>Healing up 365</title>
+        
+        <link rel="stylesheet" type="text/css" href="/css/redmond/jquery-ui-1.9.2.custom.min.css"/>
+        <s:if test='%{#isPlayer == 1}'><link rel="stylesheet" type="text/css" href="/css/player.css"/></s:if>
+        <link rel="stylesheet" type="text/css" href="/css/artn-theme.css" />
+        <link rel="stylesheet" type="text/css" href="/css/top-menu.css" />
+        <link rel="stylesheet" type="text/css" href="/css/left-menu.css" />
+        <link rel="stylesheet" type="text/css" href="/css/footer.css" />
+        <link rel="stylesheet" type="text/css" href="/css/index.css" />
+        <link rel="stylesheet" type="text/css" href="/css/common.css" />
+        <link rel="stylesheet" type="text/css" href="/css/company.css" />
+        <link rel="stylesheet" type="text/css" href="/css/customer.css" />
+        <link rel="stylesheet" type="text/css" href="/css/health.css" />
+        <!-- <link rel="stylesheet" type="text/css" href="/css/product.css" />-->
+        <link rel="stylesheet" type="text/css" href="/css/service.css" />
+        <link rel="stylesheet" type="text/css" href="/css/user.css" />  
+        <link rel="stylesheet" type="text/css" href="/css/member-join.css" />      
+        <link rel="stylesheet" type="text/css" href="/css/365plus.css" />
+        <link rel="stylesheet" type="text/css" href="/css/management.css" />
+        <link rel="stylesheet" type="text/css" href="/css/prescript.css" />
+        <link rel="stylesheet" type="text/css" href="/me/mejs-skins.css" />
+        <link rel="stylesheet" type="text/css" href="/me/mediaelementplayer.min.css" />
+        <link rel="stylesheet" type="text/css" href="/css/type1.css" />
+        <link rel="stylesheet" type="text/css" href="/css/gnb.css" />
+        <link rel="stylesheet" type="text/css" href="/css/product_info.css" />
+        
+        
+                
+        <script src="/js/jquery-1.9.1.min.js"></script>
+        <script src="/js/jquery.superLabels.min.js"></script>
+        <script src="/js/jquery-ui-1.9.2.custom.min.js"></script>
+        <script src="/js/jquery-migrate-1.2.1.min.js"></script>
+        <script src="/me/mediaelement-and-player.min.js"></script>
+        <script src="/js/scroller.js"></script>
+        <script src="/js/artn.lib.js"></script>
+        <script src="/js/artn.js"></script>
+        <script src="/js/artn.const.js"></script>
+        <script src="/js/artn.sortable.js"></script>
+        <script src="/js/artn.thumblist.js"></script>       
+        <script src="/js/artn.player.base.js"></script>
+        <script src="/js/artn.player.video.js"></script>
+        <script src="/js/artn.player.narrator.js"></script>
+        <script src="/js/artn.player.movie.js"></script>
+        <script src="/js/artn.player.subtitlectrl.js"></script>
+        <script src="/js/artn.player.trackctrl.js"></script>
+        <script src="/js/artn.player.trackctrl.365plus.js"></script>
+        <script src="/js/artn.player.mediactrl.js"></script>
+        <script src="/js/artn.player.contentmgr.js"></script>
+        <script src="/js/artn.player.me.js"></script>
+        <script src="/js/artn.validation.js"></script>
+        <script src="/js/webnote.js"></script>
+        
+        <script src="/js/artn.execute.js"></script>
+        
+        <script>
+        $(document).ready(function(){
+            Artn.TabContent.create(".mini-board");
+            $(".color-test tbody td:nth-child(2)").each(function(index){
+                var jqTd = $(this);
+                jqTd.prev().css("background-color", jqTd.text());
+                jqTd.text( jqTd.text().toUpperCase() );
+            });
+        });
+        </script>
+    </head>
+
+    <body>
+        <input type="hidden" name="contents" value="${param.contents}"/>
+        <input type="hidden" name="join" value="${param.join}"/>
+        <div class="container">
+            <div class="header">
+                <div class="nav top-menu">
+                        <s:if test ='%{#session.user.auth_type == 1610612736}'>
+                        <a href="/user/list">admin</a>
+                        </s:if>
+                        <s:if test='%{#session.user != null}'>
+                            <s:property value='%{#session.user.name}'/>님 환영합니다.
+                            <a href="/logout">로그아웃</a>
+                        </s:if>
+                        <s:else>
+                            <a href="/login">로그인</a>
+                            <a href="/join">회원가입</a>
+                        </s:else>
+                        <a href="/index.jsp">Home</a>
+                        <a href="/contents.jsp?contents=sub5_3&menu=5">Sitemap</a>
+                        <!-- <a href="/contents.jsp?contents=sub4_6&menu=4">Contact Us</a> -->
+                        <s:if test='%{#session.user != null}'>                    
+                        <a href="/user/show.action?id=${session.user.id}">My Page</a>
+                        </s:if>
+                </div>
+                
+                <div class="top-gnb">
+                    <jsp:include page="/WEB-INF/include/menu/gnb.htmlpart"/>	                
+                </div>                          
+            </div>
+<div id="body">
+<s:set var="menu">${menu }</s:set>
+<s:if test="#menu > 0">
+<div class="nav left-menu">
+<jsp:include page="/WEB-INF/include/menu/${menu }.htmlpart"/>
+</div>
+</s:if>
+<jsp:doBody/>
+</div>
+<div id="footer">
+   <div>
+       <div class="section">
+           <h1><a href="/index.jsp">Healing up 365</a></h1>
+           <address>
+               <em>본사</em> 서울 중구 장충동 1가 34-6 탑빌딩 1층, <em>부설연구소</em> 경기도 고양시 일산동구 무궁화로 20-38(장항동) 5층<br />
+               대표연락처 TEL: 031-905-1659 / FAX: 031-904-1659 / E-mail: <a href="mailto:hslee@artn.kr">hslee@artn.kr</a>
+           </address>
+           <small>Copyright⒞ 2012 arotechno Co., Ltd All Right Reserved.</small>
+       </div>
+       
+       <div class="nav">
+           <ul>
+               <li><a href="/contents.jsp?contents=sub1_1&menu=1">회사소개</a></li>
+               <li><a href="/contents.jsp?contents=sub1_5&menu=1">오시는길</a></li>
+               <li><a href="/contents.jsp?contents=sub4_6&menu=4">제휴문의</a></li>
+           </ul>
+       </div>
+   </div>
+</div>
+<div id="aside">
+<s:include value="/WEB-INF/include/browserClick.htmlpart"/>
+<jsp:include page="/WEB-INF/include/browser.htmlpart" flush="true" />
+</div>
+</div>
+</body>
+</html>

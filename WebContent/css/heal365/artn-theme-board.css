@@ -1,0 +1,164 @@
+/* TODO: 하위 컨텐츠 공통 스타일: 추후에 빼야함[시작] - 2013.09.04 by jhson*/
+	
+.section.contents{		
+	width: 800px;
+	display: inline-block;
+}
+.section.contents .header{		
+	height: 30px;
+	margin-bottom: 20px;
+}
+.section.contents .header h1{
+	
+}
+/* TODO: 하위 컨텐츠 공통 스타일: 추후에 빼야함[종료] - 2013.09.04 by jhson*/
+
+
+
+/* heal365 전용 우측 아이콘 추가[시작] */
+.board-list .row-num:after,
+.board-list .name:after,
+.board-list .date:after,
+.board-list .view-cnt:after {
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	background: url("images/artn-icons.png") no-repeat;
+	background-position: -80px -192px;
+	content: " ";
+	position: relative;
+	top: 4px;
+}
+/* heal365 전용 우측 아이콘 추가[종료] */
+
+/* 항목별 컬럼헤더 너비 조정[시작] */
+.board-list .row-num { width: 55px; }
+.board-list .div { width: 80px; }
+.board-list .name { width: 80px; }
+.board-list .date { width: 80px; }
+.board-list .view-cnt { width: 70px; }
+.board-list .subject { text-align: left; padding-left: 1em; }
+.board-list .file { width: 40px; }
+.board-list .phone { width: 90px;}
+.board-list th.last { width: 80px;}
+.board-list th._border { width: 1px; }
+/* 항목별 컬럼헤더 너비 조정[종료] */
+
+
+/*========================================================= board common =========================================================*/
+.board-show thead tr:first-child, .board-edit thead tr:first-child 			{border-top: 2px solid #d1d1d1;}
+
+.board-list, .board-show, .board-edit, #fileAttachCtrl			{ font-size: 12px; border-collapse: collapse; width: 100%; margin: 0 0 10px 0;}
+.board-list tr, .board-show tr, .board-edit tr 					{ height: 30px; }
+.board-list tbody tr, .board-show tr, .board-edit tr			{ border-bottom: 1px solid #d1d1d1; }
+
+.footer.board 									{ display: block; position: relative; min-height: 35px; margin-bottom: 0px;}
+.footer.board .buttons 							{ text-align: right; margin-top: 10px; }
+.buttons.show, .buttons.edit			{border-top: 15px solid #d1d1d1; padding-top: 8px;}
+/*========================================================= board common =========================================================*/
+
+
+/*========================================================= board list =========================================================*/
+.board-list th, .board-list td	{ text-align: center; }
+.board-list th					{ font-weight: bold; background: url(images/commonbgpack/artn-bg-pack.png) no-repeat; vertical-align: middle; line-height: 30px; background-position: 0px -32px; }
+.board-list th:first-child		{ background-position: 0px 0px; width: 55px;}
+.board-list th:last-child		{ background-position: -310px -64px; }
+.board-list th.last				{ background-position: -300px -64px; }
+
+.board-list.img td.img {width: 75px;}
+.board-list.img img {display: block; width: 75px; height: 50px;}
+.board-list.img tbody tr {height: 50px;}
+
+/*.footer.board form.search					{ width: 100%; text-align: right; margin-top: 1em; }*/
+.page-controller 							{ margin: 0 auto; display: table;}
+.page-controller a, .page-controller span 	{ float: left;}
+/*.page-controller span a 					{ padding: 7px; font-family: verdana; font-size: 12px; }*/
+/*.page-controller .page-num.selected			{ font-weight: bold; }*/
+/*.page-controller span.delimiters a			{ background: url('image/delimiters-page-ctrl.png') 0px 50% no-repeat; }*/
+.page-controller span a:first-child			{ background-position: -1px 0px; }
+
+.page-controller span a { }
+.page-controller .artn-icon-32, .page-controller .page-num		{font-size: 11px; display: inline-block; width: 20px; height: 20px; text-indent: 0; line-height: 20px; text-align: center; border: 1px solid #ccc; margin: 0 1px 0 1px;}
+.page-controller .artn-icon-32.page-first,
+.page-controller .artn-icon-32.page-prev,
+.page-controller .artn-icon-32.page-next,
+.page-controller .artn-icon-32.page-last    {background: none; font-size: 10px;}
+.page-controller a.artn-icon-32:hover, .page-controller .page-num:hover {background-color: #ccc; text-decoration: none; color: #fff; }
+
+.board.search {text-align: center;}
+.board.search input[name='search_text'] {width: 160px; }
+/*========================================================= board list =========================================================*/
+
+
+/*========================================================= board show =========================================================*/
+.board-show tr.delimiter td {  background: url(images/commonbgpack/delimiter-1x10-d1d1d1.png) no-repeat; background-position: 0% 50%; }
+.board-show tr.delimiter td:first-child {  background: none; }
+.board-show tr.delimiter td.empty {background-color: #eee;}
+
+.board-show thead td {text-align: center;}
+.board-show thead .attach-file th {width: 70px; border-right: 1px solid #d1d1d1;}
+.board-show thead .category {width: 70px; color: #1ea1c7; font-weight: bold;}
+.board-show thead .name {width: 200px;}
+.board-show thead .view-cnt {width: 100px;}
+.board-show thead .date {width: 215px;}
+.board-show thead .list {text-align: right;}
+
+.board-show thead .attach-file td,
+.board-show tbody td,
+.board-show tfoot .comment td {padding-left: 1em; text-align: left;}
+
+.board-show tbody .image-field {border-bottom-style: dashed;}
+.board-show tbody .image-field img {width: 99%; margin: 1em 0 1em 0;}
+/*========================================================= board show =========================================================*/
+
+
+/*========================================================= board show comment =========================================================*/
+.comment-item {border-bottom: 1px solid #d1d1d1;}
+.comment-item .comment-wrap {width: 99%; border-collapse: collapse; margin-top: 10px;}
+.comment-item .user-img {width: 80px; vertical-align: top; text-align: center;}
+.comment-item .user-img img  {width: 60px; height: 60px; border: 1px solid #d1d1d1; margin: 0 0 1em 0;}
+.comment-item .name {width: 80px;}
+.comment-item .date {width: 200px;}
+.comment-item .buttons {text-align: right;}
+.comment-item .buttons a {display: inline-block; width: 60px; height: 20px; line-height: 20px; text-align: center; background: url(images/commonbgpack/delimiter-1x10-d1d1d1.png) no-repeat; background-position: 0% 50%; }
+.comment-item textarea {width: 610px; height: 60px; float: left;}
+.comment-item .comment-modify text {}
+
+.comment-list a.modify-cancel,
+.comment-list form.comment-modify {display: none;}
+
+.comment-write {padding: 10px; border: 1px solid #d1d1d1; margin: 10px; display: block; background-color: #eee;}
+.comment-write textarea {width: 670px; height: 60px; float: left; position: relative; }
+.comment-write #checkbox_SecretComment {}
+.comment-write label {font-size: 12px;}
+
+.comment-item .wrap,
+.comment-write .wrap {margin-bottom: 10px;}
+.comment-item button.comment-submit,
+.comment-write button.comment-submit {height: 60px; clear: both;}
+/*========================================================= board show comment =========================================================*/
+
+
+/*========================================================= board edit =========================================================*/
+.board-edit thead th, .board-edit thead td {padding-left: 7px; width: 89%; line-height: 20px;}
+.board-edit thead th {width: 80pt; background-color: #eee; font-weight: bold; text-align: left;}
+.board-edit input[type='text'] {width: 98%;}
+.board-edit textarea {width: 98%; height: 500px;}
+.board-edit tbody td {padding-top: 10px;}
+/*========================================================= board edit =========================================================*/
+
+
+
+/*========================================================= board attach files =========================================================*/
+#fileAttachCtrl { font-size: 13px; }
+#fileAttachCtrl tbody li.selected				{ background-color: #ccc; }
+#fileAttachCtrl th, #fileAttachCtrl td 	{ border: 1px solid #d1d1d1; }
+#fileAttachCtrl tbody th { width: 100px; }
+#fileAttachCtrl tbody th, #fileAttachCtrl tbody td { padding: 5px; }
+#fileAttachCtrl li { margin-bottom: 4px; }
+#fileAttachCtrl thead td, #fileAttachCtrl tfoot td { background-color: #eee; vertical-align: middle; }
+
+#label_fileSize { visibility: hidden; vertical-align: middle; }
+.file-attach-controller {display: inline-block; position: relative; float: right;}
+#fileAttachCtrl input[type='file'] { width: 120px; color: #eee; }
+/*========================================================= board attach files =========================================================*/

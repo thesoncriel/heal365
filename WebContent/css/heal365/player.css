@@ -1,0 +1,122 @@
+
+/*========================================================= player show =========================================================*/
+.board-show tbody .player-field {text-align: center;}
+.board-show tbody .player-field .player {margin: 1em 0 1em 0; display: inline-block; width: 640px;}
+.board-show tbody .player-field {border-bottom-style: dashed;}
+/*========================================================= player show =========================================================*/
+
+
+#currentRepeat {
+	float: left;
+	width: 100px;
+	height: 60px;
+	background-color: #000;
+	font-size: 15px;
+	font-weight: bold;
+	color: #ffaa44;
+	font-family: "나눔 고딕", "맑은 고딕", "돋움", sans-serif;
+	text-align: center;
+}
+#currentRepeat span{
+	position: relative;
+	left: 10px;
+	top: 10px;
+}
+.ui-player-thumbnail{
+    width: 540px;
+    height: 60px;
+    /*margin-left: 220px;*/
+    background-color: #000;
+    display: table;
+}
+
+.ui-player-thumbnail a.ui-list-prev.ui-icon.ui-icon-carat-1-w,
+.ui-player-thumbnail a.ui-list-next.ui-icon.ui-icon-carat-1-e{
+    float: left;
+    width: 40px;
+    height: 40px;
+}
+
+.ui-player-thumbnail .ui-list-prev{
+    float: left;    
+    margin-left: 5px;
+}
+
+.ui-player-thumbnail .ui-list-prev,
+.ui-player-thumbnail .ui-list-next{    
+    text-decoration: none;
+    font-weight: bold;
+    color: white;
+    margin-top: 10px;
+}
+
+.ui-icon-carat-1-w { background-position: 0px 0px; }
+.ui-icon-carat-1-e { background-position: -40px 0px; }
+
+.ui-icon{
+    background-image: url(images/bizicon/heal365-player-icon-pack.png);
+}
+
+.ui-player-thumbnail ol{
+    float: left;
+    width: 460px;
+    height: 55px;
+    padding: 0px;
+    margin-top: 5px;
+    margin-left: 0px;
+}
+.ui-player-thumbnail ol li{
+    float: left;    
+    width: 120px;
+    height: 40px;
+    padding: 5px;
+    margin-right: 15px;
+    background-color: #2d2d2d;
+}
+.ui-player-thumbnail ol li:hover,
+.ui-player-thumbnail ol .selected{
+    background: #f89100; /* Old browsers */
+    background: -moz-linear-gradient(top, #f89100 0%, #c96100 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f89100), color-stop(100%,#c96100)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, #f89100 0%,#c96100 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, #f89100 0%,#c96100 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top, #f89100 0%,#c96100 100%); /* IE10+ */
+    background: linear-gradient(top bottom, #f89100 0%,#c96100 100%); /* W3C */
+}
+.ui-player-thumbnail ol li a{
+    float: left;
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.ui-player-thumbnail ol li a img {
+	float: left;
+	width: 40px;
+	height: 40px;
+}
+
+
+.ui-player-thumbnail ol li a .thumb-title{
+    float: left;
+    width: 65px;
+    margin: 5px;
+}
+
+
+.ui-player-thumbnail:after{
+	clear: both;
+}
+
+.ui-player-thumbnail .ui-list-next{
+    float: left;
+    margin-left: -5px;
+    margin-right: 0px;
+}
+
+
+
+
+/*
+.ui-icon-eject { background-position: -280px -400px; }
+*/

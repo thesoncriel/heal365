@@ -1,0 +1,188 @@
+
+.container{
+	min-width: 1024px;
+}
+.container>.header{
+	/*height: 130px;*/
+	background-image: url("/img/prj/prj-bg_header.png");
+	background-repeat: repeat-x;
+}
+/*top-menu*/
+.header .nav.top-menu{
+    text-align: right;    
+    height: 15px;
+    
+	color: #fff;
+	font-size: 12px;
+	padding-top: 2px;
+	padding-bottom: 3px;
+	width: 1024px;
+	margin: 0 auto;
+	position: relative;
+	
+}
+.header .nav.top-menu span{
+	width: 400px;
+	display: inline-block;
+	height: 15px;
+	position: relative;
+	margin-top: -3px;
+}
+.header .nav.top-menu span select{
+	position: absolute;
+	margin: 0;
+	top: 0;
+	right: 0;
+}
+
+.header .nav.top-menu a{
+    text-decoration:none;
+    color: #fff;
+    border-right: 1px dotted #fff;
+    padding: 0px 10px 0px 10px;        
+    height: 15px;
+}
+.header.medifit_ta{
+	background-image: none;
+}
+.header.medifit_ta .nav.top-menu,
+.header.medifit_ta .nav.top-menu a{
+	color: black;
+}
+.header .nav.top-menu a:last-child{
+    border:0;
+}
+/*top-menu*/
+
+/*global-menu*/
+.header .top-gnb {
+    height : 80px;
+}
+
+.header .gnb{   
+    width: 1024px;
+    /* overflow: hidden; */
+    margin: 0 auto;
+    border-right: 1px solid #cccccc;
+}
+
+
+.gnb {
+	position : relative;
+}
+
+.gnb ul {
+    padding-left : 0px;
+	list-style-type : none;
+	z-index : 100;
+}
+
+.header .allBar a,
+.header .gnb a{
+    text-decoration: none;
+    font-family: "맑은 고딕", /*"돋움", "arial black",*/ sans-serif;
+}
+
+.header .gnb h1,
+.header .gnb>ul>li>a{
+    display: inline-block;
+    float: left;
+}
+
+.header .gnb h1 a{
+	width: 135px;
+	height: 68px;
+	
+	float: left;
+	text-indent: -65535px;
+	background-image: url("/img/prj/prj-biz-logo_top.png");
+	background-repeat: no-repeat;
+	background-position: 50% 50%;
+}
+
+.header .gnb>ul{
+    height : 68px;
+}
+
+.gnb.horizon >ul>li{
+    float: left;
+    width: 174px;
+}
+
+.gnb.horizon>ul>li li{
+    float: left;
+}
+
+.header .gnb>ul>li>a{ 
+    font-size: 15px;
+    color: #333;
+    padding: 18px 0px 0px 13px;
+    border-left: 1px solid #cccccc;
+    width: 160px;
+    height: 49px;
+    font-weight: bold;
+}
+.header .gnb>ul>li>a:hover{
+    background-image: url("images/menu-hover.1x79.png");
+    background-repeat: repeat-x;
+    background-position: 50% 50%;
+    /* text-decoration: none; */
+}
+.header .gnb>ul>li>a.last{
+    width: 179px;
+}
+
+
+.header .gnb.horizon>ul>li>ul{
+    margin-left: 150px;
+}
+.header .gnb.horizon>ul>li+li ul{
+    margin-left: 323px;
+}
+.header .gnb.horizon>ul>li+li+li ul{
+    margin-left: 495px; 
+}
+.header .gnb.horizon>ul>li+li+li+li ul{
+    margin-left: 670px;
+}
+.header .gnb.horizon>ul>li+li+li+li+li ul{
+    margin-left: 360px; 
+}
+
+.header .gnb.horizon>ul>li li a{
+    padding: 3px 20px 3px 20px;
+    display: block;
+    text-align: center;
+}
+
+.header .gnb>ul>li li a:hover{
+    color: #fff;
+    background-color: #31c1d2;
+}
+
+.header .gnb.horizon>ul>li ul
+{
+    text-align: left;
+    
+    position: absolute;
+    left : 0; 
+    top: 69px; 
+    font-size: 13px;
+
+
+	float : none;
+    display : none;	
+}
+
+
+.gnb .depth3{
+	
+}
+
+
+
+
+
+
+/*.allBar,*/
+.gnb:not(.all,.wide)>ul>li ul { width: 860px; display: none;}

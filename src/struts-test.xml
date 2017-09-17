@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+    <package name="test" namespace="/test" extends="struts-default">
+        <action name="list" class="artn.heal.controller.TestAction" method="list">
+            <result>zipcode_test.jsp</result>
+        </action>
+        <action name="show" class="artn.heal.controller.TestAction" method="show">
+            <result>show.jsp</result>
+        </action>
+        <action name="edit" class="artn.heal.controller.TestAction" method="show">
+            <result>edit.jsp</result>
+        </action>
+        <action name="jsonlist" class="artn.heal.controller.TestAction" method="jsonList">
+            <result>json.jsp</result>
+        </action>
+        <action name="write" class="artn.heal.controller.TestAction" method="edit">
+
+            <result type="redirect">list.action</result>
+        </action>
+        <action name="modify" class="artn.heal.controller.TestAction" method="edit">
+        	<result type="redirect">show?id=${id}</result>
+        </action>
+        <action name="test" class="artn.heal.controller.TestAction" method="test">
+        	<result>test.jsp</result>
+        </action>
+        <action name="select" class="artn.heal.controller.TestAction" method="select">
+        	<result>select.jsp</result>
+        </action>
+        <action name="exe" class="artn.heal.controller.TestAction" method="exe">
+            <result>exe.jsp</result>
+        </action>
+    </package>
+</struts>

@@ -1,0 +1,95 @@
+/********************************* FUNCTION & PROCEDURE 생성 부분 **************************************/
+DELIMITER $$
+
+CREATE FUNCTION fn_getAge(date_birth datetime)
+RETURNS INTEGER
+BEGIN
+    return year(now()) - year(date_birth) 
+        - (datediff(
+            concat(
+                year(now()), '-', 
+                month(date_birth), '-', 
+                day(date_birth)
+            ), now() ) > 0);
+END $$
+
+CREATE FUNCTION fn_getDateTimeKor(datetime_data datetime)
+RETURNS CHAR(22)
+BEGIN
+    declare iWeekday int default weekday(datetime_data);
+    declare sWeekdayKor char(1);
+
+    set sWeekdayKor = case 
+        when iWeekday = 0 then '월'
+        when iWeekday = 1 then '화'
+        when iWeekday = 2 then '수'
+        when iWeekday = 3 then '목'
+        when iWeekday = 4 then '금'
+        when iWeekday = 5 then '토'
+        else '일'
+    end;
+
+    return concat(date_format( datetime_data, '%Y-%m-%d (' ), sWeekdayKor, time_format(datetime_data, ') %H:%i'));
+END $$
+
+DELIMITER ;
+
+/*
+function 생성이 안될 때 이걸 넣자!
+DETERMINISTIC
+READS SQL DATA
+*/
+
+
+/********************************* View 생성 부분 **************************************/
+create or replace view artn_user_view as
+select 
+    usr.*,
+    ua.auth_user,
+    ua.auth_user_kor,
+    ua.restrict_menu,
+    ua.restrict_user_edit,
+    fn_getAge(usr.date_birth) as age,
+    fn_getDateTimeKor(usr.date_join) as date_join_fmt_kor,
+    date_format(date_join, '%Y-%m-%d') as date_join_fmt,
+    (CASE WHEN usr.gender = 'm' THEN '남자' ELSE '여자' END) as gender_kor
+from 
+    artn_user usr
+	left outer join artn_user_auth ua
+	on usr.auth_user_id = ua.id
+;
+
+create or replace view artn_group_user_view as
+select
+	gusr.*,
+	usr.name as user_name,
+	grp.name as group_name,
+	grp.phone_group as phone_group,
+	grp.group_type,
+	
+	uath.auth_user as auth_group,
+	uath.auth_user_kor as auth_group_kor,
+	uath.restrict_menu,
+	uath.restrict_user_edit,
+
+	date_format(gusr.date_join, '%Y-%m-%d') as date_join_fmt,
+	
+	usr.gender_kor as user_gender_kor,
+	usr.age as user_age,
+	usr.date_birth as user_date_birth, 
+	usr.phone_mobi as user_phone_mobi,
+	usr.phone_home as user_phone_home,
+	usr.email as user_email,
+	usr.zipcode_home as user_zipcode_home,
+	usr.address_home1 as user_address_home1,
+	usr.address_home2 as user_address_home2,
+	usr.address_home_new as user_address_new
+from
+	artn_group_user gusr
+	left outer join artn_user_auth uath
+	on gusr.auth_group_id = uath.id
+	left outer join artn_group grp
+	on gusr.id_group = grp.id
+	left outer join artn_user_view usr
+	on gusr.id_user = usr.id
+;

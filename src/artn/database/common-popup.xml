@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="artn.common">
+
+<select id="popup-single" parameterType="map" resultType="map">
+	<![CDATA[
+		select *,
+			date_format(date_upload, '%Y-%m-%d') date_upload_fmt,
+			date_format(date_update, '%Y-%m-%d') date_update_fmt,
+			date_format(date_start, '%Y-%m-%d') date_start_fmt,
+			date_format(date_end, '%Y-%m-%d') date_end_fmt			
+		from 
+			artn_popup
+		where
+			id = #{id};
+	]]>
+</select>
+
+<select id="popup-all" parameterType="map" resultType="map">
+  <![CDATA[
+  		select 
+  			*,
+			date_format(date_upload, '%Y-%m-%d') date_upload_fmt,
+			date_format(date_update, '%Y-%m-%d') date_update_fmt,
+			date_format(date_start, '%Y-%m-%d') date_start_fmt,
+			date_format(date_end, '%Y-%m-%d') date_end_fmt,
+		
+			(select count(*) from artn_popup
+			where
+				( ( (#{id_group} is null) and (id_group = 0)) or (id_group = #{id_group}) ) and  				
+  				( ( (#{title} is null) and true ) or  (title like concat('%', #{title}, '%') ) )  				
+			) as row_count
+  		from artn_popup
+  		where
+  			( ( (#{id_group} is null) and (id_group = 0)) or (id_group = #{id_group}) ) and  				
+  			( ( (#{title} is null) and true ) or  (title like concat('%', #{title}, '%') ) )
+		order by
+			date_update desc
+  		limit 
+			#{offset}, #{rowlimit};
+	]]>
+  </select>
+
+<update id="popup-modify" parameterType="map">
+  <![CDATA[
+	  replace into
+	    artn_popup
+	    values(
+	         #{id}
+			,#{popup_seq}
+			,#{title}
+			,#{id_user}
+			,#{id_group}
+			,#{id_event}
+			,#{id_product}
+			
+			,#{width}
+			,#{height}
+			,#{goto_url}
+			,#{file_img_popup}
+			,#{location_x}			
+			,#{location_y}
+			
+			,#{date_upload}
+			,#{date_update}
+			,#{date_start}
+			
+			,#{date_end}			
+			,#{popup_opt}
+			,#{outer_popup_url}
+			,#{popup_content}			
+	    );
+  ]]>
+  </update>
+  
+    <update id="popup-delete" parameterType="map">
+  	<![CDATA[
+  		UPDATE
+  			artn_popup
+  		SET
+  			id = id * -1
+  		WHERE
+  			id_user = #{id_user}
+  	]]>
+  </update>
+ </mapper>

@@ -1,0 +1,507 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="artn.common">
+
+<!-- 상품 목록 -->
+<select id="product-single" parameterType="map" resultType="map">
+<![CDATA[
+    select *,
+    datediff(date_format(date_sales_end,'%Y-%m-%d'), now()) as date_sales_diff
+    from
+        artn_product
+    where 
+        id = #{id};
+]]>
+</select>
+
+<select id="product-all" parameterType="map" resultType="map">
+<![CDATA[
+    select *,
+        date_format(date_sales_start, '%Y년 %m월 %d일') as date_sales_start_fmt,
+        date_format(date_sales_end, '%Y년 %m월 %d일') as date_sales_end_fmt,
+        (select
+            count(*)
+        from
+            artn_product
+        where
+            if( #{admin} = 'true',(((#{id_group} is null) and true) or (id_group = #{id_group}))
+               ,(((#{id_group} is null) and true) or (id_group = #{id_group})) and
+               datediff(now(), date_format(date_sales_start,'%Y-%m-%d')) >= 0 and
+               datediff(date_format(date_sales_end,'%Y-%m-%d'), now()) >= 0 ) and
+              ((#{search_text} is null) or (#{search_text} = '')) or
+              (name like concat('%', #{search_text}, '%')) or
+              (name_sub like concat('%', #{search_text}, '%')) 
+           
+        ) as row_count
+    from
+        artn_product
+    where
+        if( #{admin} = 'true',(((#{id_group} is null) and true) or (id_group = #{id_group}))
+           ,(((#{id_group} is null) and true) or (id_group = #{id_group})) and
+           datediff(now(), date_format(date_sales_start,'%Y-%m-%d')) >= 0 and
+           datediff(date_format(date_sales_end,'%Y-%m-%d'), now()) >= 0 ) and
+ 			((#{search_text} is null) or (#{search_text} = '')) or
+              (name like concat('%', #{search_text}, '%')) or
+              (name_sub like concat('%', #{search_text}, '%')) 
+        
+    order by 
+        id desc
+    limit
+    #{offset},#{rowlimit};
+]]>
+</select>
+
+<update id="product-modify" parameterType="map">
+  <![CDATA[
+        replace into
+            artn_product
+        values(
+            #{id},
+            #{id_group},
+            #{id_opt_group},
+            #{name},
+            #{name_sub},
+            
+            #{price},
+            #{price_before},
+            #{price_event},
+            #{category},
+            #{sold_count},
+            
+            #{product_count},
+            #{rating_count},
+            #{rating_sum},
+            #{rating_avg},
+            #{opt_terms_user},
+            
+            #{date_upload},
+            #{date_update},
+            #{date_sales_start},
+            #{date_sales_end},
+            #{pay_point},
+            
+            #{contents},
+            #{contents_summary},
+            #{file_img},
+            #{sales_min},
+            #{sales_max}
+            );
+    ]]>
+</update>
+
+<update id="product-update" parameterType="map">
+    <![CDATA[
+        update 
+            artn_product
+        set
+            product_count = product_count - #{product_count},
+            sold_count = sold_count + #{product_count}
+        where
+            id = #{id_product}
+        ;
+    ]]>
+</update>
+
+<!-- 상품 옵션  -->
+<select id="product-opt-all" parameterType="map" resultType="map">
+  <![CDATA[
+        select
+			pog.*,
+			poi.item_seq,
+			poi.item_name,
+			poi.item_price,
+			poi.item_count
+		from
+			artn_product_opt_group pog
+			left outer join artn_product_opt_item poi
+			on pog.id_opt_item = poi.id_opt_item 
+		where
+			( ((#{id_opt_group} is null) and true) or (pog.id_opt_group = #{id_opt_group}) ) and
+            ( ((#{id_group} is null) and true) or (pog.id_group = #{id_group}) )
+        ;
+    ]]>
+</select>
+<!-- 기존 -->
+<!-- 
+<select id="product-opt-all" parameterType="map" resultType="map">
+  <![CDATA[
+        select
+			pog.*,
+			poi.opt_name,
+			poi.opt_memo,
+			poi.opt_type,
+			poi.items_price,
+			poi.items_name
+		from
+			artn_product_opt_group pog
+			left outer join artn_product_opt_item poi
+			on pog.id_opt_item = poi.id_opt_item 
+		where
+			( ((#{id_opt_group} is null) and true) or (pog.id_opt_group = #{id_opt_group}) ) and
+            ( ((#{id_group} is null) and true) or (pog.id_group = #{id_group}) )
+        ;
+    ]]>
+</select>
+ -->
+
+<!-- 상품 옵션 그룹 -->
+<select id="product-opt-group-sub" parameterType="map" resultType="map">
+  <![CDATA[
+        select
+			*
+		from
+			artn_product_opt_group
+		where
+			( ((#{id_opt_group} is null) and true) or (id_opt_group = #{id_opt_group}) )
+        ;
+    ]]>
+</select>
+
+<select id="product-opt-group-all" parameterType="map" resultType="map">
+  <![CDATA[
+  		select
+			distinct id_opt_group, `name`, id_group,
+			(select count(*)
+            from
+                (select distinct id_opt_group from artn_product_opt_group) own
+            where
+            ( ((#{id_opt_group} is null) and true) or (id_opt_group = #{id_opt_group}) ) and
+            ( ((#{id_group} is null) and true) or ((#{id_group} = 0) and true) or (id_group = #{id_group}) ) and
+            ( ((#{name} is null) and true) or (name like concat('%', #{name}, '%') ) ) and
+            id_opt_group > 0
+            ) as row_count
+		from
+			artn_product_opt_group
+		where
+			( ((#{id_opt_group} is null) and true) or (id_opt_group = #{id_opt_group}) ) and
+            ( ((#{id_group} is null) and true) or ((#{id_group} = 0) and true) or (id_group = #{id_group}) ) and
+            ( ((#{name} is null) and true) or (name like concat('%', #{name}, '%') ) ) and
+            id_opt_group > 0
+        limit
+    		#{offset},#{rowlimit};
+        ;
+    ]]>
+</select>
+
+<select id="product-opt-group-id-max" parameterType="map" resultType="int">
+  <![CDATA[
+  		select max(id_opt_group) as id_opt_group
+        from
+            artn_product_opt_group
+        ;
+    ]]>
+</select>
+
+<update id="product-opt-group-modify" parameterType="map">
+  <![CDATA[
+        replace into
+            artn_product_opt_group
+        values(
+            #{id_opt_group},
+            #{opt_seq},
+            #{id_opt_item},
+            #{id_group},
+            #{name},
+            
+            #{required},
+            #{opt_name},
+            #{opt_type}
+            );
+    ]]>
+</update>
+
+<update id="product-opt-group-delete" parameterType="map">
+<![CDATA[
+        delete
+        from
+            artn_product_opt_group
+        where
+            id_opt_group = #{id_opt_group};
+  ]]>
+</update>
+<!-- 
+UPDATE
+            artn_product_opt_group
+        SET
+            id_opt_group = #{id_opt_group} * -1
+        WHERE
+            id_opt_group = #{id_opt_group};
+ -->
+
+<!-- 상품 옵션 아이템 -->
+<select id="product-opt-item-single" parameterType="map" resultType="map">
+  <![CDATA[
+        select *
+        from 
+            artn_product_opt_item
+        where 
+            id_opt_item = #{id_opt_item};
+    ]]>
+</select>
+
+<select id="product-opt-item-all" parameterType="map" resultType="map">
+  <![CDATA[
+        select *,
+            (select count(*)
+            from
+                artn_product_opt_item
+            where
+                ( ((#{id_opt_item} is null) and true) or (id_opt_item = #{id_opt_item}) ) and
+                ( ((#{id_group} is null) and true) or (id_group = #{id_group}) ) and
+                ( ((#{item_name} is null) and (item_name like '%')) or (item_name like concat('%', #{item_name}, '%') ) ) and
+                ( ((#{item_count} is null) and true) or (item_count <= #{item_count}) ) and
+                id_opt_item > 0
+            ) as row_count
+        from
+            artn_product_opt_item
+        where
+            ( ((#{id_opt_item} is null) and true) or (id_opt_item = #{id_opt_item}) ) and
+            ( ((#{id_group} is null) and true) or (id_group = #{id_group}) ) and
+            ( ((#{item_name} is null) and (item_name like '%')) or (item_name like concat('%', #{item_name}, '%') ) ) and
+            ( ((#{item_count} is null) and true) or (item_count <= #{item_count}) ) and
+            id_opt_item > 0
+        order by 
+        id_opt_item desc, item_seq asc
+        limit
+        #{offset},#{rowlimit};
+    ]]>
+</select>
+
+<select id="product-opt-item-id-max" parameterType="map" resultType="int">
+  <![CDATA[
+  		select max(id_opt_item) as id_opt_item
+        from
+            artn_product_opt_item
+        ;
+    ]]>
+</select>
+
+<update id="product-opt-item-modify" parameterType="map">
+  <![CDATA[
+        replace into
+            artn_product_opt_item
+        values(
+            #{id_opt_item},
+            #{id_group},
+            #{item_seq},
+            #{item_name},
+            #{item_price},
+            #{item_count}
+            );
+    ]]>
+</update>
+
+<update id="product-opt-item-modify-count-inc" parameterType="map">
+  <![CDATA[
+  		update artn_product_opt_item
+  		set
+  			item_count = item_count + #{item_count}
+  		where
+  			id_opt_item = #{id_opt_item} and
+  			item_seq = #{item_seq}
+        ;
+    ]]>
+</update>
+
+<update id="product-opt-item-modify-count-dec" parameterType="map">
+  <![CDATA[
+  		update artn_product_opt_item
+  		set
+  			item_count = item_count - #{item_count}
+  		where
+  			id_opt_item = #{id_opt_item} and
+  			item_seq = #{item_seq}
+        ;
+    ]]>
+</update>
+
+<update id="product-opt-item-delete" parameterType="map">
+<![CDATA[
+	delete
+	from
+		artn_product_opt_item
+	where
+		id_opt_item = #{id_opt_item};
+  ]]>
+</update>
+
+<!-- 
+        UPDATE
+            artn_product_opt_item
+        SET
+            id_opt_item = #{id_opt_item} * -1
+        WHERE
+            id_opt_item = #{id_opt_item};
+ -->
+
+<!-- 상품 정보 이미지 -->
+<select id="product-img-single" parameterType="map" resultType="map">
+<![CDATA[
+    select *
+    from
+        artn_product_img
+    where
+        id_product = #{id}
+    ;
+]]>
+</select>
+
+<select id="product-img-all" parameterType="map" resultType="map">
+<![CDATA[
+    select *,
+        (select count(*)
+            from
+                artn_product_img
+            where
+                ((#{id_product} is null) and true) or (id_product = #{id_product})
+            ) as row_count
+    from
+        artn_product_img
+    where
+        ((#{id_product} is null) and true) or (id_product = #{id_product})
+	order by seq        
+    ;
+]]>
+</select>
+
+<update id="product-img-modify" parameterType="map">
+  <![CDATA[
+        replace into
+            artn_product_img
+        values(
+            #{id_product},
+            #{seq},
+            #{file_img},
+            #{ori_img},
+            #{desc}
+            );
+    ]]>
+</update>
+
+<delete id="product-img-delete" parameterType="map">
+<![CDATA[
+    delete from
+        artn_product_img
+    where
+        id_product = #{id_product}
+    ;
+]]>
+</delete>
+<!-- 상품 평가 -->
+
+<update id="product-rating-update" parameterType="map">
+  <![CDATA[
+        update 
+            artn_product
+        set
+            rating_count = rating_count +1,
+            rating_sum = rating_sum + #{rating},
+            rating_avg = (rating_sum + #{rating})/(rating_count +1)
+        where
+            id = #{id}
+    ]]>
+</update>
+
+<!-- 상품 카트 -->
+<select id="user-cart-single" parameterType="map" resultType="map">
+    <![CDATA[
+        select *
+        from
+            artn_user_cart
+        where
+            (id_user = #{id_user}) and (id_product = #{id_product})
+        ;    
+    ]]>
+</select>
+
+<select id="user-cart-all" parameterType="map" resultType="map">
+    <![CDATA[
+        select *,
+            (select count(*)
+            from
+                artn_user_cart
+         ]]> 
+        <if test='isAdmin != "isAdmin"'>
+        <![CDATA[  
+            	where
+	            ((#{id_user} is null) and true) or (id_user = #{id_user})
+	  	]]>  
+	  	</if>
+            ) as row_count
+        from
+            artn_user_cart
+        
+        <if test='isAdmin != "isAdmin"'>
+        <![CDATA[  
+        where
+            ((#{id_user} is null) and true) or (id_user = #{id_user})
+        ;
+  		  ]]>
+        </if>       
+</select>
+
+<update id="user-cart-modify" parameterType="map">
+    <![CDATA[
+        replace into
+            artn_user_cart
+        values(
+            #{id_cart},
+            #{id_user},
+            #{id_product},
+            #{subject},
+            #{opt},
+            
+            #{opt_detail},
+            #{opt_indices},
+            #{price},
+            #{price_opt},            
+            #{product_count},
+            
+            #{file_img},
+            #{date_upload}
+        );
+    ]]>
+</update>
+
+<delete id="user-cart-delete" parameterType="map">
+    <![CDATA[
+        delete from
+            artn_user_cart
+        where
+        ]]>  
+        <if test='isAdmin != "isAdmin"'>
+        <![CDATA[  
+            	(id_user = #{id_user}) and
+	  	]]>  
+	  	</if>
+	  	 <![CDATA[  
+           id_cart = #{id_cart}
+        ;
+    ]]>
+</delete>
+
+<select id="product-opt-id" parameterType="map" resultType="map">
+    <![CDATA[
+        select * from
+        	artn_product a, artn_product_opt_group b
+		where
+			1=1 and
+			a.id_opt_group = b.id_opt_group and
+			a.id=#{id_product};   
+    ]]>
+</select>
+
+<update id="product-opt-count-update" parameterType="map">
+    <![CDATA[
+		update 
+			artn_product_opt_item 
+				set item_count = item_count + (-1 * #{product_count})
+			where 
+				id_opt_item = #{id_opt_item} 
+			and item_seq = #{item_seq};
+    ]]>
+</update>
+
+</mapper>

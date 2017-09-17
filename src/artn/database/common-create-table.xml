@@ -1,0 +1,545 @@
+/********************************* Table 생성 부분 **************************************/
+
+/*회원정보*/
+create table if not exists artn_user (
+id              	varchar(16) not null,
+name            	varchar(50) not null,
+pw              	varchar(16) not null,
+nick				varchar(50) not null,
+email           	varchar(50) not null,
+phone_home      	char(20) default '',
+phone_mobi      	char(20) not null,
+jumin           	char(14) default '',
+date_birth      	char(10) not null,
+date_join       	datetime not null,
+date_delete       	datetime not null,
+gender          	char(1) default 'm',
+zipcode_home    	char(7) default 0,
+address_home1   	varchar(125) not null,
+address_home2   	varchar(125) not null,
+address_home_new	varchar(125) not null,
+auth_user_id       	int not null,
+file_img        	varchar(100),
+ori_img				varchar(100),
+introduce       	varchar(255) not null,
+status_user		    int not null comment '가입 상태: 신청중(1), 가입됨(2), 탈퇴됨(음수), 익명사용자(0)',
+opt					int not null,
+login_limit			int not null default 2,
+primary key(id)
+);
+
+create table if not exists artn_user_auth (
+id					int not null AUTO_INCREMENT comment '권한 ID',
+id_group			int not null default 0 comment '권한 코드를 사용하는 그룹. 0이면 사이트 전체의 권한임',
+auth_user 			int not null comment '권한 코드',
+auth_user_kor 		varchar(16) not null default '' comment '권한 명칭',
+restrict_menu 		int not null default 0 comment '메뉴 보기 권한',
+restrict_user_edit	int not null default 0 comment '사용자 정보 수정 권한',
+primary key(id)
+);
+
+INSERT INTO `artn_user` (`id`, `name`, `pw`, `nick`, `email`, `phone_home`, `phone_mobi`, `date_birth`, `date_join`, `gender`, `zipcode_home`, `address_home1`, `address_home2`, `address_home_new`, `auth_user_id`, `introduce`, `status_user`, `opt`) VALUES ('admin', '관리자', '123456', '', '', '', '000-0000-0000', '1992-01-01', '2013-07-30 15:37:13', 'm', '', '', '', '', '1', '', '2', '0');
+INSERT INTO `artn_user_auth` (`id_group`, `auth_user`, `auth_user_kor`, `restrict_menu`, `restrict_user_edit`) VALUES (0, '1610612736', '최고 관리자', 2147483647, '0');
+INSERT INTO `artn_user_auth` (`id_group`, `auth_user`, `auth_user_kor`, `restrict_menu`, `restrict_user_edit`) VALUES (0, '536870912', '관리자', 2147483647, '0');
+INSERT INTO `artn_user_auth` (`id_group`, `auth_user`, `auth_user_kor`, `restrict_menu`, `restrict_user_edit`) VALUES (0, '131072', '일반 회원', 2147483647, '0');
+
+
+
+/* 그룹 정보 */
+CREATE TABLE if not exists artn_group(
+id          		INT NOT NULL AUTO_INCREMENT,
+name        		VARCHAR(50) NOT NULL,
+phone_group 		CHAR(20) NOT NULL,
+phone_fax   		CHAR(20) NOT NULL,
+
+homepage			varchar(255) not null,
+group_type			int not null,
+date_estab			char(10) not null,
+date_create			datetime not null,
+
+map_coord			VARCHAR(50) NOT NULL comment '지도 좌표',
+map_url     		VARCHAR(255) NOT NULL comment '좌표로 만들어진 지도 URL',
+
+file_img    		VARCHAR(100),
+file_banner 		VARCHAR(100),
+
+zipcode_group		CHAR(7) NOT NULL,
+address_group_new	varchar(125) not null,
+address_group1		VARCHAR(125) NOT NULL,
+address_group2		VARCHAR(125) NOT NULL,
+
+introduce   		TEXT NOT NULL,
+PRIMARY KEY (id)
+);
+
+
+/* 그룹 사용자 정보 */
+CREATE TABLE if not exists artn_group_user(
+id          		INT NOT NULL AUTO_INCREMENT,
+id_user				varchar(16) not null,
+id_group			int not null,
+date_join			datetime not null,
+auth_group_id		int not null comment '해당 그룹에서의 권한 정보',
+opt					int not null,
+comment				varchar(255) not null,
+
+PRIMARY KEY (id)
+);
+
+/* 게시판 */
+CREATE TABLE if not exists artn_board (
+  `id` bigint(20) NOT NULL,
+  `id_user` varchar(16) NOT NULL,
+  `user_name` varchar(50) NOT NULL,
+  `password` varchar(45) NOT NULL,
+  `depth` int(11) NOT NULL DEFAULT '0',
+  `subject` char(100) NOT NULL,
+  `board_no` int(11) NOT NULL,
+  `date_upload` datetime NOT NULL,
+  `date_update` datetime NOT NULL,
+  `view_count` int(11) NOT NULL DEFAULT '0',
+  `comment_count` int(11) NOT NULL DEFAULT '0',
+  `good_count` int(11) NOT NULL DEFAULT '0',
+  `bad_count` int(11) NOT NULL DEFAULT '0',
+  `status` int(11) NOT NULL DEFAULT '0',
+  `keywords` char(100) NOT NULL,
+  `category` char(10) NOT NULL,
+  `contents` text NOT NULL,
+  `contents_summary` text NOT NULL,
+  `file_img` char(100),
+  PRIMARY KEY (`id`),
+  KEY `id_user` (`id_user`),
+  KEY `board_type` (`board_no`),
+  KEY `keywords` (`keywords`)
+);
+
+/* 게시판 첨부파일*/
+CREATE TABLE if not exists artn_board_attach(
+id					int not null auto_increment,
+id_board 			bigint not null,
+seq 				int not null,
+file_name 			varchar(255) not null,
+ori_name	 		varchar(255) not null,
+date_upload 		datetime not null,
+size_file 			int not null,
+down_count 			int not null,
+PRIMARY KEY(id),
+INDEX(id_board)
+);
+
+/* 게시판 댓글 */
+CREATE TABLE if not exists artn_board_comment (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `parent_id` int(11) NOT NULL,
+  `id_board` int(11) NOT NULL,
+  `id_user` varchar(16) NOT NULL,
+  `user_name` varchar(10) NOT NULL,
+  `seq` int(11) NOT NULL,
+  `depth` int(11) NOT NULL,
+  `date_update` datetime NOT NULL,
+  `good_count` int(11) NOT NULL DEFAULT '0',
+  `bad_count` int(11) NOT NULL DEFAULT '0',
+  `status` int(11) NOT NULL DEFAULT '0',
+  `comment` varchar(255) NOT NULL,
+  `user_img` varchar(100) NOT NULL,
+  `user_ip` char(15) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `id_board` (`id_board`),
+  KEY `seq` (`seq`)
+);
+
+
+
+/*상품 목록*/
+create table if not exists artn_product(
+`id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_group` int(11) NOT NULL,
+  `id_opt_group` bigint DEFAULT NULL,
+  `name` char(255) NOT NULL,
+  `name_sub` char(255) NOT NULL,
+  `price` int(11) NOT NULL,
+  `price_before` int(11) NOT NULL,
+  `price_event` int(11) NOT NULL,
+  `category` int(11) NOT NULL,
+  `sold_count` int(11) NOT NULL,
+  `product_count` int(11) NOT NULL,
+  `rating_count` int(11) NOT NULL,
+  `rating_sum` int(11) NOT NULL,
+  `rating_avg` int(11) NOT NULL,
+  `opt_terms_user` int(11) NOT NULL,
+  `date_upload` datetime NOT NULL,
+  `date_update` datetime NOT NULL,
+  `date_sales_start` datetime NOT NULL,
+  `date_sales_end` datetime NOT NULL,
+  `pay_point` int(11) NOT NULL,
+  `contents` text NOT NULL,
+  `contents_summary` char(255) DEFAULT NULL,
+  `file_img` char(100) DEFAULT NULL,
+  `sales_min` int(11) NOT NULL DEFAULT '0',
+  `sales_max` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `id_group` (`id_group`),
+  KEY `category` (`category`)
+);
+
+/*상품 옵션 그룹*/
+create table if not exists artn_product_opt_group(
+id_opt_group        bigint not null,
+seq					int not null,
+id_opt_item			int not null,
+id_group            int not null,
+`name`              char(40) not null,
+required			tinyint not null,
+opt_name			char(40) not null,
+opt_type			int,
+primary key(id_opt_group, seq)
+);
+
+/*상품 옵션 아이템*/
+create table if not exists artn_product_opt_item(
+id_opt_item         int not null auto_increment,
+id_group            int not null,
+item_seq			tinyint not null,
+item_name			char(30) not null,
+item_price			int not null,
+item_count			int not null,
+primary key(id_opt_item, item_seq)
+);
+
+/*상품 옵션 이미지*/
+create table if not exists artn_product_img(
+id_product          int not null,
+seq                 int not null,
+file_img            char(100),
+ori_img             char(100),
+`desc`              char(100),
+primary key(id_product, seq)
+);
+
+/*상품 구매 현황*/
+create table if not exists artn_purchase_header(
+`id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_user` varchar(16) NOT NULL,
+  `subject` char(200) NOT NULL,
+  `product_count` int(11) NOT NULL,
+  `status` int(11) NOT NULL,
+  `amount` int(11) NOT NULL,
+  `amount_adjust` int(11) NOT NULL,
+  `date_upload` datetime NOT NULL,
+  `date_confirm` datetime DEFAULT NULL,
+  `date_start` datetime NOT NULL,
+  `date_end` datetime NOT NULL,
+  `valid_day` int(11) NOT NULL,
+  `comment_admin` char(255) DEFAULT NULL,
+  `comment` char(255) DEFAULT NULL,
+  `delivery_num` char(20) NOT NULL,
+  `transaction_num` char(50) NOT NULL,
+  `pay_type` int(11) NOT NULL,
+  `pay_type_name` char(20) NOT NULL,
+  `to_name` char(50) NOT NULL,
+  `to_phone_mobi` char(20) NOT NULL,
+  `to_phone_home` char(20) NOT NULL,
+  `to_zipcode` char(7) NOT NULL,
+  `to_address` char(50) NOT NULL,
+  `pay_user_name` char(50) NOT NULL,
+  `pay_phone` char(20) NOT NULL,
+  `pay_mail` char(50) NOT NULL,
+  `pay_bank_user` char(50) NOT NULL,
+  `pay_bank_name` char(10) NOT NULL,
+  `pay_bank_account` char(20) NOT NULL,
+  `coupon_detail` char(100) NOT NULL,
+  `coupon_downcost` char(50) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `id_user` (`id_user`),
+  KEY `status` (`status`)
+);
+
+/*상품 구매 현황 상세*/
+CREATE TABLE if not exists `artn_purchase` (
+  `id_purchase` int(11) NOT NULL AUTO_INCREMENT,
+  `id_product` int(11) NOT NULL,
+  `id_payment` int(11) NOT NULL,
+  `purchase_seq` int(11) NOT NULL,
+  `id_user` varchar(16) NOT NULL,
+  `pay_user_name` char(50) NOT NULL,
+  `pay_phone` char(20) NOT NULL,
+  `subject` char(200) NOT NULL,
+  `opt` int(11) NOT NULL,
+  `opt_detail` char(255) NOT NULL,
+  `opt_indices` varchar(255) NOT NULL,
+  `price` int(11) NOT NULL,
+  `price_opt` int(11) NOT NULL,
+  `product_count` int(11) NOT NULL,
+  `sum_price` int(11) NOT NULL,
+  `file_img` char(100) NOT NULL,
+  `date_start` datetime NOT NULL,
+  `date_end` datetime NOT NULL,
+  `status` int(11) NOT NULL,
+  `coupon_detail` char(100) NOT NULL,
+  `coupon_downcost` char(50) NOT NULL,
+  `date_confirm` datetime DEFAULT NULL,
+  `transaction_num` char(50) NOT NULL,
+  `delivery_num` char(20) NOT NULL,
+  PRIMARY KEY (`id_purchase`,`purchase_seq`),
+  KEY `status` (`status`),
+  KEY `index3` (`id_user`,`pay_user_name`,`pay_phone`)
+);
+
+/*상품 장바구니*/
+create table if not exists artn_user_cart(
+id_cart             int not null AUTO_INCREMENT,
+id_user             varchar(16) not null,
+id_product          int not null,
+subject             char(255) not null,
+opt                 int not null,
+opt_detail          char(255) not null,
+opt_indices         varchar(255) NOT NULL,
+price               int not null,
+price_opt           int not null,
+product_count       int not null,
+file_img			char(100) not null,
+date_upload         datetime not null,
+primary key(id_cart, id_user, id_product)
+);
+
+/*상품 구매 내역 기록*/
+create table if not exists artn_purchase_history(
+id                  int not null AUTO_INCREMENT,
+id_purchase         int not null,
+id_user             varchar(16) not null,
+status              int not null,
+sum_price           int not null,
+date_upload         datetime not null,
+delivery_num        char(20) not null,
+primary key(id),
+KEY `status` (`status`)
+);
+
+/*쇼핑몰 구매내역 테이블*/
+CREATE TABLE if not exists `artn_payment` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_user` varchar(16) NOT NULL,
+  `amount` int(11) NOT NULL,
+  `amount_adjust` int(11) NOT NULL,
+  `date_upload` datetime NOT NULL,
+  `date_confirm` datetime DEFAULT NULL,
+  `comment` char(255) DEFAULT NULL,
+  `comment_admin` char(255) DEFAULT NULL,
+  `delivery_num` char(20) NOT NULL,
+  `transaction_num` char(50) NOT NULL,
+  `pay_type` int(11) NOT NULL,
+  `pay_type_name` char(20) NOT NULL,
+  `to_name` char(50) NOT NULL,
+  `to_phone_mobi` char(20) NOT NULL,
+  `to_phone_home` char(20) NOT NULL,
+  `to_zipcode` char(7) NOT NULL,
+  `to_address` char(50) NOT NULL,
+  `pay_user_name` char(50) NOT NULL,
+  `pay_phone` char(20) NOT NULL,
+  `pay_mail` char(50) NOT NULL,
+  `pay_bank_user` char(50) NOT NULL,
+  `pay_bank_name` char(10) NOT NULL,
+  `pay_bank_account` char(20) NOT NULL,
+  `delivery_status` tinyint NOT NULL,
+  PRIMARY KEY (`id`)
+);
+
+/*사이트 방문객 정보 테이블*/
+create table if not exists artn_statistics_visitor_site(
+ip					char(15) not null,
+ipv6				char(39) not null,
+date_visit			datetime not null,
+url_inflow			varchar(400) not null,
+url_inflow_short	char(100) not null,
+browser_name		char(30) not null,
+browser_version		char(50) not null,
+os_name				char(30) not null,
+os_version			char(50) not null,
+platform			char(50) not null,
+device				char(20) not null,
+id_user				varchar(16) not null
+);
+
+/*팝업 정보 테이블*/
+create table if not exists artn_popup (
+  id INT NOT NULL AUTO_INCREMENT,
+  popup_seq TINYINT NOT NULL,
+  title VARCHAR(100) NOT NULL,
+  id_user VARCHAR(16) NOT NULL,
+  id_group INT NOT NULL,
+  id_event INT NOT NULL,
+  id_product INT NOT NULL,
+  width INT NOT NULL,
+  height INT NOT NULL,
+  goto_url CHAR(255) NOT NULL,
+  file_img_popup CHAR(100) NOT NULL,
+  location_x INT NOT NULL,
+  location_y INT NOT NULL,
+  date_upload DATETIME NOT NULL,
+  date_update DATETIME NOT NULL,
+  date_start DATETIME NOT NULL,
+  date_end DATETIME NOT NULL,
+  popup_opt INT NOT NULL,
+  outer_popup_url CHAR(255) NOT NULL,
+  popup_content TEXT NULL,
+PRIMARY KEY (id) );	
+
+/*상품 게시판 테이블*/
+create table if not exists artn_product_board (
+  id int NOT NULL AUTO_INCREMENT,
+  id_user varchar(16) NOT NULL,
+  id_seller varchar(16) NOT NULL,
+  id_group int NOT NULL,  
+  id_product int NOT NULL,
+  user_name varchar(50) NOT NULL,
+  seller_name varchar(50) NOT NULL,    
+  guest_phone char(20) NOT NULL,
+  guest_mail char(50) NOT NULL,
+  subject varchar(100) NOT NULL,
+  board_no int NOT NULL,  
+  date_upload DATETIME NOT NULL,
+  date_update DATETIME NOT NULL,
+  date_replay DATETIME NOT NULL,
+  view_count int(11) NOT NULL DEFAULT '0',  
+  good_count int(11) NOT NULL DEFAULT '0',
+  bad_count int(11) NOT NULL DEFAULT '0',
+  status int(11) NOT NULL DEFAULT '0',  
+  category char(10) NOT NULL,
+  contents text NOT NULL,
+  contents_reply text NOT NULL,
+  rating int NOT NULL,
+PRIMARY KEY (id) );	
+
+/*배송관리 테이블*/
+create table if not exists artn_delivery(
+	id_delivery int auto_increment not null,
+	id_group int not null,
+	delivery_price int not null,
+	free_condition int not null,
+	status tinyint not null,
+PRIMARY KEY (id_delivery) );
+
+/* 유저 삭제*/
+CREATE TABLE `artn_user_delete_bak` (
+  `id` varchar(16) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `pw` varchar(16) NOT NULL,
+  `nick` varchar(50) NOT NULL,
+  `email` varchar(50) NOT NULL,
+  `phone_home` char(20) DEFAULT '',
+  `phone_mobi` char(20) NOT NULL,
+  `jumin` char(14) DEFAULT '',
+  `date_birth` char(10) NOT NULL,
+  `date_join` datetime NOT NULL,
+  `date_delete` datetime DEFAULT NULL,
+  `gender` char(1) DEFAULT 'm',
+  `zipcode_home` char(7) DEFAULT '0',
+  `address_home1` varchar(125) NOT NULL,
+  `address_home2` varchar(125) NOT NULL,
+  `address_home_new` varchar(125) NOT NULL,
+  `auth_user_id` int(11) NOT NULL,
+  `file_img` varchar(100) DEFAULT NULL,
+  `ori_img` varchar(100) DEFAULT NULL,
+  `introduce` varchar(255) NOT NULL,
+  `status_user` int(11) NOT NULL COMMENT '가입 상태: 신청중(1), 가입됨(2), 탈퇴됨(음수), 익명사용자(0)',
+  `opt` int(11) NOT NULL,
+  `login_limit` int(11) NOT NULL DEFAULT '2',
+  `delete_comment` varchar(45) NOT NULL,
+  PRIMARY KEY (`id`)
+);
+
+/* 설문조사 테이블*/
+CREATE TABLE if not exists artn_survey (
+  `id` int NOT NULL auto_increment,
+  `question_count` tinyint NOT NULL,
+  `work_type` char(10) NOT NULL,
+  `subject` char(100) NOT NULL,
+  `date_upload` datetime NOT NULL,
+  `id_group` int NOT NULL,
+  `id_writer` varchar(16) NOT NULL,
+  `writer_name` char(30) NOT NULL,
+  `date_start` datetime NOT NULL,
+  `date_end` datetime NOT NULL,
+  `opt` tinyint NOT NULL,
+  PRIMARY KEY (`id`)
+);
+
+CREATE TABLE if not exists artn_survey_question (
+  `id` int NOT NULL auto_increment,
+  `id_survey` int NOT NULL,
+  `seq` tinyint NOT NULL,
+  `work_type` char(10) NOT NULL,
+  `question_cont` text NOT NULL,
+  `question_type` tinyint NOT NULL,
+  `question_item` varchar(255) NOT NULL,
+PRIMARY KEY (`id`),
+index(`id_survey`)
+);
+
+CREATE TABLE if not exists artn_survey_answer (
+  `id` int NOT NULL auto_increment,
+  `id_survey` int NOT NULL,
+  `id_question` int NOT NULL,
+  `seq` tinyint NOT NULL,
+  `work_type` char(10) NOT NULL,
+  `answer_int` int NOT NULL,
+  `answer_text` text NULL,
+  `id_user` varchar(16) NOT NULL,
+  `user_name` char(30) NOT NULL,
+  `date_upload` datetime NOT NULL,
+PRIMARY KEY (`id`),
+index(`id_survey`,`id_question`)
+);
+
+/* DB 스케줄*/
+<sql id="event_schedule">
+        <![CDATA[
+        show variables like '%event%'; /* 출력용임. 실제 적용 시는 제외 할 것 */
+        
+        SET GLOBAL event_scheduler = ON;
+        
+        GRANT EVENT ON *.* TO jglovismall;
+        GRANT EVENT ON database_name.* TO jglovismall;
+        
+        DELIMITER $
+        CREATE EVENT status_event
+        ON SCHEDULE
+        -- 하루마다 이벤트 실행
+        EVERY 1 DAY
+        -- 이벤트 시작시간은 지금 시간으로 부터 1시간 후 부터
+        STARTS CURRENT_TIMESTAMP + INTERVAL 1 MINUTE
+        -- 이벤트가 완료된(수행) 후 이벤트를 보전합니다
+        ON COMPLETION PRESERVE
+        DO
+        
+        BEGIN
+            -- 수행할 구문
+            SET SQL_SAFE_UPDATES=0;
+
+            update artn_payment a,
+            (
+                select b.id_payment, b.sum_price from artn_purchase b where 1=1 and b.date_end < now() and b.status=1 
+            )b
+            set
+                a.amount=a.amount-b.sum_price
+            where a.id=b.id_payment;
+            
+            UPDATE artn_purchase_header set status=-11 where date_end < now() and status=1;
+
+            update artn_purchase a,
+            (
+                select b.*
+                from artn_purchase_history b 
+                where 1=1 and (date(now()) - date(b.date_upload)) > 7 and b.status= 4 
+            )b
+            set
+                a.status = 10
+            where (a.id_purchase = b.id_purchase) and (a.status = 4);
+            
+        END $
+        DELIMITER ;
+        
+        DROP EVENT IF EXISTS status_event; /* 삭제용임. 실제 적용 시는 제외 할 것 */
+        ]]>
+    </sql>  
+ 

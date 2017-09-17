@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="artn.common">
+ 
+    <!--사용자 정보-->
+  <select id="user-single" parameterType="map" resultType="map">
+	<![CDATA[
+		select
+	      	*
+		from 
+			artn_user_view
+		where
+			( 	( (id = #{id}) and (#{name} is null) and (#{phone_mobi} is null) ) or
+				( (#{id} is null) and (name = #{name}) and (phone_mobi = #{phone_mobi}) ) or
+				( (id = #{id}) and (name = #{name}) and (phone_mobi = #{phone_mobi}) )	)
+			and
+			(status_user > 0 )
+		;
+	]]>
+  </select>
+  <select id="user-all" parameterType="map" resultType="map">
+  <![CDATA[
+  		select *,
+			(select count(*) from artn_user_view
+			where
+			    ( ((#{id} is null) and (id like '%')) or (id like concat('%', #{id}, '%') ) ) and
+				( ((#{name} is null) and (name like '%')) or (name like concat('%', #{name}, '%') ) ) and
+				( ((#{email} is null) and (email like '%')) or (email like concat('%', #{email}, '%') ) ) and
+				( ((#{phone_mobi} is null) and (phone_mobi like '%')) or (phone_mobi like concat('%', #{phone_mobi}, '%') ) ) and
+                ( ((#{address_home} is null) and (address_home1 like '%')) or (address_home1 like '%${address_home}%') or (address_home2 like '%${address_home}%') ) and
+				( ((#{auth_user} is null) and (auth_user >= 0)) or ( (auth_user & #{auth_user}) = #{auth_user} ) ) and
+				( ((#{search_div} is null) or (#{search_text} = '')) or
+				  ((#{search_div} = '') and (#{search_text} != '')) or
+                  ((#{search_div} = 'name') and (name like concat('%', #{search_text}, '%')) ) or
+                  ((#{search_div} = 'id') and (id = #{search_text})) ) and
+                (status_user >= 0)
+			) as row_count
+  		from artn_user_view
+  		where
+  		        ( ((#{id} is null) and (id like '%')) or (id like concat('%', #{id}, '%') ) ) and
+  			    ( ((#{name} is null) and (name like '%')) or (name like concat('%', #{name}, '%') ) ) and
+                ( ((#{email} is null) and (email like '%')) or (email like concat('%', #{email}, '%') ) ) and
+                ( ((#{phone_mobi} is null) and (phone_mobi like '%')) or (phone_mobi like concat('%', #{phone_mobi}, '%') ) ) and
+                ( ((#{address_home} is null) and (address_home1 like '%')) or (address_home1 like '%${address_home}%') or (address_home2 like '%${address_home}%') ) and
+                ( ((#{auth_user} is null) and (auth_user >= 0)) or ( (auth_user & #{auth_user}) = #{auth_user} ) ) and
+                ( ((#{search_div} is null) or (#{search_text} = '')) or
+                  ((#{search_div} = '') and (#{search_text} != '')) or
+                  ((#{search_div} = 'name') and (name like concat('%', #{search_text}, '%')) ) or
+                  ((#{search_div} = 'id') and (id = #{search_text})) ) and
+                (status_user >= 0)
+  		limit 
+			#{offset}, #{rowlimit};
+	]]>
+  </select>
+  <update id="user-modify" parameterType="map">
+  <![CDATA[
+	  replace into 
+		artn_user
+        values(
+            #{id}, 
+            #{name}, 
+            #{pw}, 
+            #{nick},
+            #{email}, 
+            
+            #{phone_home},
+            #{phone_mobi}, 
+            #{jumin}, 
+            #{date_birth},
+            #{date_join},
+            #{date_delete}, 
+            
+            #{gender},
+            #{zipcode_home}, 
+            #{address_home1}, 
+            #{address_home2}, 
+            #{address_home_new}, 
+            
+            #{auth_user_id}, 
+            #{file_img}, 
+            #{ori_img}, 
+            #{introduce}, 
+            #{status_user}, 
+            
+            #{opt},
+            #{login_limit}
+        );
+	]]>
+  </update>
+  <update id="user-delete" parameterType="map">
+  <![CDATA[
+  		update artn_user
+  		set
+  			status_user = -1 * status_user
+  			,date_delete = now()
+  		where
+  			id = #{id}
+		;
+	]]>
+  </update>
+  
+   <insert id="user-delete-bak">
+  <![CDATA[
+  insert into
+	artn_user_delete_bak
+		(select *, concat(#{delete_comment}, ': ', #{delete_comment_sub}) from artn_user where id = #{id} and status_user < 0);
+	]]>
+  </insert>
+
+  <update id="user-passwd-update" parameterType="map">
+  <![CDATA[
+        update artn_user
+        set
+            pw = #{pw}
+        where
+            id = #{id}
+        ;
+    ]]>
+  </update>
+<!-- FIXME: 프로토타입 1차 종료 후 삭제 예정 
+  <update id="user-logout" parameterType="map">
+    <![CDATA[
+        update heal_user
+        set 
+            id_comb_used = #{id_comb_used},
+            id_comb_nth = #{id_comb_nth}
+           
+        where
+            id = #{id}
+        ;
+    ]]>
+  </update>
+  -->
+  <select id="user-auth-single" parameterType="map" resultType="map">
+	<![CDATA[
+		select
+	      	*
+		from 
+			artn_user_auth
+		where
+			id = #{id}
+		;
+	]]>
+  </select>
+  <select id="user-auth-all" parameterType="map" resultType="map">
+  <![CDATA[
+  		select *,
+  			hex(auth_user) as auth_user_hex,
+  			hex(restrict_menu) as restrict_menu_hex,
+  			hex(restrict_user_edit) as restrict_user_edit_hex,
+			(select count(*) from artn_user_auth
+				where 
+			( ((#{id_group} is null) and (id_group > 0)) or (id_group = #{id_group} ) )
+			) as row_count
+  		from 
+  			artn_user_auth
+		where
+			( ((#{id_group} is null) and (id_group > 0)) or (id_group = #{id_group} ) )
+  		
+  		order by
+  			auth_user desc
+  		
+  		limit 
+			#{offset}, #{rowlimit};
+	]]>
+  </select>
+  <update id="user-auth-modify" parameterType="map">
+  <![CDATA[
+	  replace into 
+		artn_user_auth
+        values(
+        	#{id},
+        	#{id_group}, #{auth_user}, 
+            #{auth_user_kor}, #{restrict_menu}, #{restrict_user_edit} 
+        );
+	]]>
+  </update>
+  <update id="user-auth-delete" parameterType="map">
+  <![CDATA[
+  		delete from artn_user_auth
+  		where
+  			id = #{id}
+		;
+	]]>
+  </update>
+  <insert id="user-stats">
+  <![CDATA[
+  insert into
+	artn_statistics_visitor_site
+	values(
+		#{ip}
+		,#{ipv6}
+		,now()
+		,#{urlInflow}
+		,#{urlInflowShort}
+		,#{browserName}
+		,#{browserVersion}		
+		,#{osName}		
+		,#{osVersion}
+		,#{osPlatform}
+		,#{device}
+		,#{idUser}
+	);
+	]]>
+  </insert>
+  
+</mapper>

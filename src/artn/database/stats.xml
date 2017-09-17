@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="artn.heal.database">
+
+<!-- 처방전 통계 -->
+	<select id="prescript-stats-ageGroup" parameterType="map" resultType="map">
+	<![CDATA[
+	select 
+		count(user_age_group) as count_user_age_group, case when user_age_group = '0대' then '유아' else user_age_group end as user_age_group
+	from 
+		heal_prescript_view_stats
+	group by
+		user_age_group
+	having
+		user_age_group is not null
+	;
+	]]>
+	</select>
+	
+	<select id="prescript-stats-painSite" parameterType="map" resultType="map">
+	<![CDATA[
+	select 
+		count(pain_site) as count_pain_site, pain_site_kor
+	from 
+		heal_prescript_view_stats
+	where
+		user_age_group is not null
+	group by
+		pain_site
+	;
+	]]>
+	</select>
+	
+	<select id="prescript-stats-painSiteByAgeGroup" parameterType="map" resultType="map">
+	<![CDATA[
+	select 
+		count(pain_site) as count_pain_site, pain_site_kor
+	from 
+		heal_prescript_view_stats
+	where
+		user_age_group = #{user_age_group}
+	group by
+		pain_site
+	;
+	]]>
+	</select>
+
+</mapper>

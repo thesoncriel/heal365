@@ -1,0 +1,48 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
+<%@ taglib prefix="s" uri="/struts-tags" %>
+<s:include value="/include/header.jsp"></s:include>
+<article class="comb-list">
+	<s:set var="isAdmin" value='%{#session.user.auth_type in {"A", "a", "t", "d"}}'/>
+	<s:if test='%{#isAdmin == true}'>
+	<s:include value="/include/form-prescript-search.jsp">
+		<s:param name="actionURI" value="actionURI"></s:param>
+	</s:include></s:if>
+	<h2>처방전 목록</h2>
+	<table>
+        <thead>
+            <tr>
+            	<s:if test='%{#isAdmin == true }'><th>환자명</th></s:if>
+                <th>진단명</th>
+                <th>중증도</th>
+                <th>진단일</th>
+                <th>만료일</th>
+                <th>수행횟수</th>
+                <th>영상보기</th>
+            </tr>
+        </thead>
+        <tbody>
+        	<s:iterator value="listData">
+            <tr>
+                <s:if test='%{#isAdmin == true }'><td><s:property value="name_user"/></td></s:if>
+                <td><a href="/prescript/show.action?id=${id }"><s:property value="diagnosis"/></a></td>
+                <td><s:property value="vas_body"/></td>
+                <td><s:property value="date_upload"/></td>
+                <td><s:property value="date_end"/></td>
+                <td><s:property value="cate_comb3"/></td>
+                <td><s:property value="exe_count"/></td>
+                <td><a href="/player/player.jsp?id=${id}">바로가기</a></td>
+            </tr>
+            </s:iterator>
+            <s:if test="%{rowCount == 0}">
+            	<s:if test='%{#isAdmin == true }'><tr><td colspan="7">자료가 없습니다.</td></tr></s:if>
+				<s:else><tr><td colspan="6">자료가 없습니다.</td></tr></s:else>
+			</s:if>
+        </tbody>
+    </table>
+    <div class="page-controller">
+	<s:property value="pageController" escapeHtml="false"/>
+	</div>
+    <a href="edit.action">추가</a>
+</article>
+<s:include value="/include/footer.htmlpart"></s:include>

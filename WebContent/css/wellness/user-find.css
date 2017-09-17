@@ -1,0 +1,104 @@
+.user-find {
+	margin-top: 20px;
+	text-align: center;	
+}
+.user-find h2 {
+	font-size: 15px;
+	padding: 7px;
+}
+
+.user-find table
+{
+    /* border: 1px solid #ccc; */
+    font-weight:bold;
+    color:  #666;
+    font-family: "돋움",Dotum;
+}
+.user-find .left,
+.user-find .right {	
+	width: 42%;
+	display: inline-block;
+	margin: 0 18px 0 18px;
+}
+.user-find .left {
+	margin-bottom: 30px;	    
+}
+
+
+.user-find tbody th {	
+	font-size : 13px;	
+    background-color: #efefef;
+}
+.user-find tbody td {
+	height: 40px;
+	text-align: left;
+}
+
+.user-find>.left>.left_frm>.board-edit>tbody.row-scope>tr>td,
+.user-find>.right>.right_frm>.board-edit>tbody.row-scope>tr>td
+{
+	font-size : 16px;
+	/* padding-top: 25px; */
+	/* padding-left: 93px; */    
+	/* height: 154px; */
+    /* vertical-align: top; */
+}
+.user-find tfoot td{
+	padding: 10px;
+}
+
+.user-find tfoot tr{
+	border-bottom: 0px;
+}
+
+.user-find tbody {
+	border: 1px solid #ccc;
+}
+
+.user-find .left td input[type="text"],
+.user-find .right td input[type="text"]
+{
+    width: 240px;
+    /* height: 24px; */
+    /* margin-bottom: 15px; */
+}
+
+.user-find th label
+{
+	display: inline-block;
+	width: 60px;
+}
+.user-find select
+{
+	/* height: 30px; */
+	width: 73px;
+}
+.user-find .bar {
+    font-size: 12px;
+}
+.user-find .board-edit .valid-group.phone input[type="text"],
+.user-find .board-edit .valid-group.phone input[type="text"]
+{
+    /* height: 24px; */
+    width: 75px;
+}
+.user-find input[type="button"] {
+	/* margin-left: 99px; */
+	/* width: 135px; */
+	height: 30px;
+	font-size: 12px;
+	/* color : #fff;
+	background-color: #ff893b;
+	background-image: none;
+	border-radius : inherit; */
+}
+.user-find td #passwd_find
+{
+	/* height:30px; */
+    /* margin-left: 5px; */
+}
+#dialog_id,
+#dialog_passwd
+{
+	text-align: center;
+}

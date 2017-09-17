@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
+		Remove this if you use the .htaccess -->
+		<title>player</title>
+		<meta name="description" content="" />
+		<meta name="author" content="JHSON" />
+		<meta name="viewport" content="width=device-width; initial-scale=1.0" />
+		<!-- Replace favicon.ico & apple-touch-icon.png in the root of your domain and delete these references -->	
+		<link rel="stylesheet" type="text/css" href="../css/healingup-player/jquery-ui-1.9.2.custom.css"/>
+		<link rel="stylesheet" type="text/css" href="../css/player.css"/>
+		<script type="text/javascript" src="../js/jquery-1.9.1.min.js"></script>
+		<script type="text/javascript" src="../js/jquery-ui-1.10.1.custom.min.js"></script>
+		<script src="../js/artn.js"></script>
+		<script src="../js/artn.const.js"></script>
+		<script src="../js/artn.thumblist.js"></script>		
+		<script src="../js/artn.player.base.js"></script>
+		<script src="../js/artn.player.video.js"></script>
+		<script src="../js/artn.player.narrator.js"></script>
+		<script src="../js/artn.player.subtitlectrl.js"></script>
+        <script src="../js/artn.player.trackctrl.js"></script>
+		<script src="../js/artn.player.mediactrl.js"></script>
+		<script src="../js/artn.player.contentmgr.js"></script>
+		<script src="../js/artn.player.js"></script>
+		<script src="../js/artn.execute.js"></script>
+	</head>
+
+	<body>
+		<div>
+            <div class="article">
+                <header>
+                    <h1>player</h1>
+                </header>
+            <div class="ui-player-container">
+                <!-- <h3 id="title">컨텐츠 조합 영상 제목</h3>
+                <p id="desc">컨텐츠에 대한 부가 설명 란. 길어질 수도 있습니다</p> -->
+                
+                <div>
+                    
+                    <h2>영상제목</h2>
+                    <div id="wrapper_Player">
+            <!--             <img id="__poster" src="" />
+                        <audio id="__audio">
+                            <source id="srcOgg" src="" type="video/ogg"></source>
+                            <source id="srcMp3" src="" type="video/mp3"></source>
+                        </audio>
+                        <video id="__video">
+                            <source id="srcWebm" src="" type="video/webm"></source>
+                            <source id="srcMp4" src="" type="video/mp4"></source>
+                            HTML5가 지원되지 않습니다. 사파리일 경우 QuickTime Player를 다운 받으시길 바랍니다. (<a href="http://www.apple.com/quicktime/download/">바로가기: </a>)
+                        </video> -->
+                    </div>
+                    <!-- //자막 처리 기능 보류
+                        <div id="subtitles">여기서 자막이 나옵니다.</div>
+                    -->
+                    <div id="imageList_Thumbnail" class="ui-player-thumbnail">
+                        <a class="ui-list-prev ui-icon ui-icon-carat-1-w" href="#">&lt;</a>
+                        <ol>
+                        <!-- // 리스트 샘플
+                            <li><a href="#"><img src="img/part1.jpg" alt="몸통 부위" /><span class="thumb-title">몸통 부위</span></a></li>
+                         -->
+                        </ol>
+                        <a class="ui-list-next ui-icon ui-icon-carat-1-e" href="#">&gt;</a>
+                    </div>
+            
+                    <div class="ui-player-controller ui-layout-table">
+                        <div class="ui-layout-tr">
+                            <div class="ui-layout-td">
+                                <button type="button" id="button_Play" class="ui-state-default ui-corner-all"><span class="ui-icon ui-icon-play">Play</span></button>
+                                <!-- <span id="button_Play" class="ui-state-default ui-corner-all ui-icon ui-icon-play">Play</span> -->
+                                <button type="button" id="button_Prev" class="ui-state-default ui-corner-all"><span class="ui-icon ui-icon-seek-prev">Prev</span></button>                        
+                                <button type="button" id="button_Next" class="ui-state-default ui-corner-all"><span class="ui-icon ui-icon-seek-next">Next</span></button>
+                            </div>
+                            <div class="ui-layout-td">
+                                <div id="slider_CurrentTime"></div>
+                            </div>
+                            <div class="ui-layout-td">
+                                <div id="label_PlayTime">10:00</div>
+                                    
+                                <button type="button" id="button_Speed" class="ui-state-default ui-corner-all"><span class="ui-icon ui-icon-speed">Speed</span></button>
+                                <div id="wrapper_Speed">
+                                    <button type="button" id="button_SpeedUp">증가</button>
+                                    <button type="button" id="button_SpeedDown">감소</button>
+                                    <button type="button" id="button_SpeedDefault">기본</button>
+                                </div>
+                                    
+                                <button type="button" id="button_FullScreen" class="ui-state-default ui-corner-all"><span class="ui-icon ui-icon-arrow-4-diag">Full Screen</span></button>
+                                <button type="button" id="button_Mute" class="ui-state-default ui-corner-all"><span class="ui-icon ui-icon-volume-on">Mute</span></button>
+                                
+                                <div id="wrapper_Volume"><div id="slider_Volume"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            <br/><br/><br/><br/>
+        </div>
+<!--
+			<div class="player-wrapper">
+				<h2 id="title"></h2>
+				<p id="desc"></p>
+				<form id="form_Player" action="">
+					
+					<div id="subtitle"></div>
+					<video id="player" controls="controls">
+						<source id="srcWebm" src="movie/0001.webm" type="video/webm"></source>
+	  					HTML5가 지원되지 않습니다. 사파리일 경우 QuickTime Player를 다운 받으시길 바랍니다. (<a href="http://www.apple.com/quicktime/download/">바로가기: </a>)
+					</video>
+					<div id="subtitles"></div>
+					<input type="button" value="Play" id="button_Play"/>
+					<input type="button" value="Stop" id="button_Stop"/>
+					<input type="button" value="Pause" id="button_Pause"/>
+					<div id="label_Speed"></div>
+					<input type="button" value="Speed Up" id="button_SpeedUp"/>
+					<input type="button" value="Speed Down" id="button_SpeedDown"/>
+					<input type="button" value="Speed Default" id="button_SpeedDefault"/>
+					
+					<div id="slider_CurrentTime" class="slider"></div>
+					<div id="label_PlayTime"></div>
+					<input type="button" value="mute" id="button_Mute"/>
+					<div id="slider_Volume" class="slider"></div>
+					
+					<ul id="imageList_Thumb">
+						
+					</ul>
+					
+					<div id="printHere">0</div>
+					<div id="status"></div>
+				</form>
+				<a href="https://developer.apple.com/safaridemos/showcase/video/">html5 video test</a>
+			</div>
+-->
+			<footer>
+
+			</footer>
+		</div>
+	</body>
+</html>
